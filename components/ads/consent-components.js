@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { AdsConsent, AdsConsentStatus } from '@react-native-firebase/admob';
 import purchaseComponent from '../purchase/purchase-component.js';
+// import dataBaseConnection from '../purchase/data-base-connect.js';
 
 const consentComponents = async (setConsentAds) => {	
 
@@ -30,6 +31,8 @@ const consentComponents = async (setConsentAds) => {
 		if (formResult.userPrefersAdFree) {
 
 			SplashScreen.hide();
+
+			// dataBaseConnection();
 							
 			purchaseComponent();
 			return;

@@ -99,6 +99,10 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
+    dexOptions {
+       javaMaxHeapSize "3g"
+    }
+
     defaultConfig {
         applicationId "com.msm.truthDetectorPrank"
         minSdkVersion rootProject.ext.minSdkVersion

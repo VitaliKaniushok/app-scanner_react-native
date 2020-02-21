@@ -8,8 +8,9 @@
   },
   "dependencies": {
     "@react-native-community/netinfo": "^5.3.3",
-    "@react-native-firebase/admob": "^6.2.0",
-    "@react-native-firebase/app": "^6.2.0",
+    "@react-native-firebase/admob": "6.3.4",
+    "@react-native-firebase/app": "6.3.4",
+    "@react-native-firebase/firestore": "^6.3.4",
     "expo": "~36.0.0",
     "expo-camera": "^8.0.0",
     "expo-face-detector": "^8.0.0",

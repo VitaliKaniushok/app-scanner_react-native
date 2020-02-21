@@ -3,11 +3,11 @@ import { StatusBar, View, Alert } from 'react-native';
 import { ContextApi } from './components/context-api.js';
 import ScannerService from './components/services/scanner-service.js';
 import { AppNavContainer } from './components/app-nav-container.js';
-// import ConsentComponents from './components/ads/consent-components.js';
 import NoInternetComponent from './components/no-internet-component.js';
 import NetInfo from "@react-native-community/netinfo";
+import dataBaseConnection from './components/purchase/data-base-connect.js';
 import RNIap, {
-  purchaseErrorListener,
+  purchaseErrorListener, 
   purchaseUpdatedListener,
   type ProductPurchase,
   type PurchaseError
@@ -133,27 +133,31 @@ export default class TwoMillion extends React.Component {
     this.purchaseUpdateSubscription = purchaseUpdatedListener((purchase: InAppPurchase | ProductPurchase ) => {
       
       const receipt = purchase.transactionReceipt;
+
         if (receipt) {
-          // yourAPI.deliverOrDownloadFancyInAppPurchase(purchase.transactionReceipt)
+          dataBaseConnection(receipt)
           // .then((deliveryResult) => {
-          //   if (isSuccess(deliveryResult)) {
+          //   if (deliveryResult) {
 
-          try {
-            Alert.alert('receipt',receipt.toString());
-            
-            // RNIap.acknowledgePurchaseAndroid(purchase.purchaseToken);
-            
-            // const ackResult = awaitRNIap.finishTransaction(purchase, false);
+          //     try {
+          //       Alert.alert('receipt',receipt.toString());
+                
+          //       // RNIap.acknowledgePurchaseAndroid(purchase.purchaseToken);
+                
+          //       // const ackResult = awaitRNIap.finishTransaction(purchase, false);
 
-          } catch (ackErr) {
+          //     } catch (ackErr) {
 
-            Alert.alert('ackErr',ackErr.toString());
-          }           
+          //       Alert.alert('ackErr',ackErr.toString());
+          //     }           
 
-        // } else {
-          // Retry / conclude the purchase is fraudulent, etc...
-        }
-    });      
+          //   } else {
+          //     Alert.alert('Base','dataBaseColection');
+          //   }
+          // });
+          }
+    });
+
 
     this.purchaseErrorSubscription = purchaseErrorListener((error: PurchaseError) => {
       console.warn('purchaseErrorListener', error);

@@ -13,9 +13,15 @@ const purchaseComponent = async () => {
 
       // Alert.alert('receipt',products[0].productId.toString());
 
-      // await RNIap.requestPurchase(products[0].productId);  
+      await RNIap.requestPurchase(products[0].productId);
 
-      const purchases = await RNIap.getAvailablePurchases();
+     //  const purchases = await RNIap.getAvailablePurchases();
+
+     //  const j = JSON.stringify(purchases);
+
+     // const jj = JSON.parse(j)[0].purchaseToken;
+     
+     // RNIap.consumePurchaseAndroid(jj);
 
 
 
@@ -26,12 +32,9 @@ const purchaseComponent = async () => {
      //  return v;
 
      // }));
-     const j = JSON.stringify(purchases);
+     
 
-     // const jj = JSON.parse(j)[0].purchaseToken;
-
-     Alert.alert('purchases',j);
-     // RNIap.consumePurchaseAndroid(jj);
+     
 
     } catch(err) {
 
