@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 
-const NoInternetComponent = () => {
+const ErrorMessage = ({errorMessage}) => {
 
 	useEffect(() => {
 
@@ -13,14 +13,15 @@ const NoInternetComponent = () => {
 
 		<View style={style.container}>
 
-			<Text style={style.text}>No connect internet</Text>
+			<Text style={style.text}>ERROR</Text>
+
+			<Text style={style.text}>{errorMessage}</Text>
 
 		</View>
-
 	)
 }
 
-export default NoInternetComponent;
+export default ErrorMessage;
 
 const style = StyleSheet.create({
 
@@ -32,6 +33,9 @@ const style = StyleSheet.create({
 	},
 	text:{
 		fontSize:25,
-		color:'#fff'
+		color:'#fff',
+		paddingTop:20,
+		paddingLeft:20,
+		paddingRight:20
 	}
 })

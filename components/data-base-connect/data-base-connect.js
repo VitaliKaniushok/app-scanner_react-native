@@ -1,16 +1,15 @@
 import { Alert } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
  
-const dataBaseConnection = async(obj) =>{
+const setDocInBase = async(obj) => {
 
-	const nameCollection = JSON.parse(obj).orderId;
+	const nameDocument = JSON.parse(obj).orderId;
 
-	// Alert.alert('nameCollection',nameCollection);
-	
-
-	await firestore().doc('data-receipt/'+nameCollection).set({
+	await firestore().doc('data-receipt/'+nameDocument).set({
 		receipt: obj
 	});
+
+	// Alert.alert('nameDocument',toString(q));
 
 	// await firestore()
 	// 	.doc('data-receipt/receipt')
@@ -28,4 +27,4 @@ const dataBaseConnection = async(obj) =>{
 	// const documentSnapshot = await firestore()
 	 	// Alert.aletr('docSnapshot',JSON.stringify(documentSnapshot))
 }
-export default dataBaseConnection;
+export {setDocInBase};

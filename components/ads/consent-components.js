@@ -4,14 +4,14 @@ import { StyleSheet, Text, View } from 'react-native';
 // import NetInfo from "@react-native-community/netinfo";
 import SplashScreen from 'react-native-splash-screen';
 import { AdsConsent, AdsConsentStatus } from '@react-native-firebase/admob';
-import purchaseComponent from '../purchase/purchase-component.js';
+import purchaseNoAds from '../purchase/purchase-no-ads.js';
 // import dataBaseConnection from '../purchase/data-base-connect.js';
 
-const consentComponents = async (setConsentAds) => {	
+const consentComponents = async (setConsentAds,setErrorMessage) => {	
 
 	// const deviceId = getDeviceId();
 
-	// await AdsConsent.addTestDevices(deviceId)
+	// await AdsConsent.addTestDevices(deviceId);
 
 	await AdsConsent.setStatus(AdsConsentStatus.UNKNOWN);	
 
@@ -22,19 +22,17 @@ const consentComponents = async (setConsentAds) => {
 	  consentInfo.status === AdsConsentStatus.UNKNOWN
 	) {
 		const formResult = await AdsConsent.showForm({
-		privacyPolicy: 'https://sites.google.com/view/msm-privacy-truth-detector/document',
-		withPersonalizedAds: true,
-		withNonPersonalizedAds: true,
-		withAdFree: true,
+			withAdFree: true,		
+			withPersonalizedAds: true,
+			withNonPersonalizedAds: true,			
+			privacyPolicy: 'https://sites.google.com/view/msm-privacy-truth-detector/document',
 		});
 
 		if (formResult.userPrefersAdFree) {
 
 			SplashScreen.hide();
-
-			// dataBaseConnection();
-							
-			purchaseComponent();
+			// dataBaseConnection();							
+			purchaseNoAds(setErrorMessage);
 			return;
 		}
 

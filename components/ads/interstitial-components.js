@@ -1,12 +1,12 @@
 import React, { useEffect, useContext } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, Text } from 'react-native';
 import { ContextApi } from '../context-api.js';
 import { InterstitialAd, TestIds, AdEventType } from '@react-native-firebase/admob';
 
 const InterstitialAdComponents = (props) => {	
 
 	let errorMessage = '';
-	const { noAds, consentAds } = useContext(ContextApi);
+	const { noAds, consentAds, setErrorMessage } = useContext(ContextApi);
 
 	useEffect(() => {
 
@@ -48,12 +48,12 @@ const InterstitialAdComponents = (props) => {
 
 	},[noAds,consentAds]);	
 
-	if (errorMessage) {		
+	if (errorMessage) {	
+
+		setErrorMessage(errorMessage)	
 
 		return (
-			<View style={styles.errorView}>
-				<Text style={styles.textError}>{errorMessage}</Text>
-			</View>			
+			null		
 		)
 
 	} else {
@@ -66,17 +66,3 @@ const InterstitialAdComponents = (props) => {
 	}
 }
 export default InterstitialAdComponents;
-
-const styles = StyleSheet.create({  
-   
-    errorView:{
-        flex:1,
-        justifyContent:'center',
-        alignItems:'center',
-        backgroundColor:'green'
-    },
-    textError:{
-    	color:'#fff',
-    	fontSize:25
-    }
-});

@@ -3,9 +3,10 @@ import { StatusBar, View, Alert } from 'react-native';
 import { ContextApi } from './components/context-api.js';
 import ScannerService from './components/services/scanner-service.js';
 import { AppNavContainer } from './components/app-nav-container.js';
-import NoInternetComponent from './components/no-internet-component.js';
+import ErrorBoundry from './components/error-boundry/error-boundry.js';
 import NetInfo from "@react-native-community/netinfo";
-import dataBaseConnection from './components/purchase/data-base-connect.js';
+import { setDocInBase } from './components/data-base-connect/data-base-connect.js';
+import arrayLanguage from './components/services/arr-language-texts.js';
 import RNIap, {
   purchaseErrorListener, 
   purchaseUpdatedListener,
@@ -17,7 +18,10 @@ export default class TwoMillion extends React.Component {
 
   scannerService = new (ScannerService(this))();
   
-  state = {   
+  state = {
+
+    errorMessage:'',
+    setErrorMessage:this.scannerService.setErrorMessage(),
 
     noAds:false,   
     consentAds:false,
@@ -66,26 +70,7 @@ export default class TwoMillion extends React.Component {
     incPitch:this.scannerService.incPitch(),
     decPitch:this.scannerService.decPitch(),
 
-    appText: {
-      topBarHome:'Scanner',
-      topBarSetting:'Setting scanner',
-      placeHolder:'Type here to add!',
-      scaning:'Scanning',
-      noObject:'No object for scanning',
-      readyScan:'Ready scanning',
-      selectMode:'Select Mode',
-      selectLanguage:'Select Language',
-      buttonTruth:'Truth detector',
-      buttonAliens:'Aliens detector',
-      buttonSelf:'Self Mode',
-      headSelfMode:'Self mode',
-      headAddText:'Add text',
-      headSpeechSet:'Speech settings',
-      buttonPitch:'Pitch',
-      buttonRate:'Rate',
-      buttonSave:'Save',
-      buttonCancel:'Cancel'
-    }     
+    appText: arrayLanguage.en
   }
 
   unsubscribe = ()=>{};
@@ -114,79 +99,82 @@ export default class TwoMillion extends React.Component {
 
     if ( this.state.noAds ) return;
 
-    this.unsubscribe();
-
     this.unsubscribe = NetInfo.addEventListener(state => {
 
       if (!state.isInternetReachable) {
 
-        return this.setState({noInternet:true});
+        return this.setState({errorMessage:"No internet connection"});
 
       } else {
 
-        return this.setState({noInternet:false});
+        return this.setState({errorMessage:''});
       }
 
     });
   }
+
   componentDidMount() {
-    this.purchaseUpdateSubscription = purchaseUpdatedListener((purchase: InAppPurchase | ProductPurchase ) => {
+
+    try {
+
+     (async function() {await RNIap.initConnection()} )();
+
+    } catch(error) {
+     
+      this.setState({ setErrorMessage: error })
+    }
+
+    this.purchaseUpdate = purchaseUpdatedListener((purchase: InAppPurchase | ProductPurchase ) => {
       
       const receipt = purchase.transactionReceipt;
 
         if (receipt) {
-          dataBaseConnection(receipt)
-          // .then((deliveryResult) => {
-          //   if (deliveryResult) {
 
-          //     try {
-          //       Alert.alert('receipt',receipt.toString());
-                
-          //       // RNIap.acknowledgePurchaseAndroid(purchase.purchaseToken);
-                
-          //       // const ackResult = awaitRNIap.finishTransaction(purchase, false);
+          try {
 
-          //     } catch (ackErr) {
+            setDocInBase(receipt);
 
-          //       Alert.alert('ackErr',ackErr.toString());
-          //     }           
+            Alert.alert('receipt',receipt.toString());
+            
+            // RNIap.acknowledgePurchaseAndroid(purchase.purchaseToken);
+            
+            // const ackResult = awaitRNIap.finishTransaction(purchase, false);
 
-          //   } else {
-          //     Alert.alert('Base','dataBaseColection');
-          //   }
-          // });
+          } catch (error) {
+
+            this.setState({ setErrorMessage: error })
           }
+
+        } else {
+
+          this.setState({ setErrorMessage: 'No purchase' })
+        }
     });
 
-
-    this.purchaseErrorSubscription = purchaseErrorListener((error: PurchaseError) => {
-      console.warn('purchaseErrorListener', error);
+    this.purchaseError = purchaseErrorListener((error: PurchaseError) => {
+      this.setState({ setErrorMessage: error })
     });
   }  
 
   componentWillUnmount() {
     this.unsubscribe();
 
-    if (this.purchaseUpdateSubscription) {
-      this.purchaseUpdateSubscription.remove();
-      this.purchaseUpdateSubscription = null;
+    if (this.purchaseUpdate) {
+      this.purchaseUpdate.remove();
+      this.purchaseUpdate = null;
     }
-    if (this.purchaseErrorSubscription) {
-      this.purchaseErrorSubscription.remove();
-      this.purchaseErrorSubscription = null;
+    if (this.purchaseError) {
+      this.purchaseError.remove();
+      this.purchaseError = null;
     }
   }
 
-  render() {     
+  render() {
     
-    if ( this.state.noInternet ) {
+    return (
 
-      return <NoInternetComponent />;
-
-    } else {      
-    
-      return (
-              
+      <ErrorBoundry errorMessage={this.state.errorMessage}>
+            
         <ContextApi.Provider value={this.state}>
 
           <StatusBar backgroundColor="#000000" barStyle="light-content" />
@@ -194,7 +182,8 @@ export default class TwoMillion extends React.Component {
           <AppNavContainer /> 
 
         </ContextApi.Provider>
-      )
-    } 
+
+      </ErrorBoundry>
+    )    
   }
 }

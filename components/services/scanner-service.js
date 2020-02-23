@@ -9,6 +9,17 @@ function ScannerService(obj) {
 
 	return class {
 
+		setErrorMessage() {
+
+			return function(message) {
+
+				obj.setState({ 			      		
+		      		errorMessage: message			      		
+		      	})
+
+			}
+		}
+
 		checkSetNoAds(id) {
 			
 			return async function() {

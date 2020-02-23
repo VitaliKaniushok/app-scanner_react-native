@@ -3,7 +3,6 @@ import { View, BackHandler, Text } from 'react-native';
 import { ContextApi } from '../context-api.js';
 import * as FaceDetector from 'expo-face-detector';
 import RNExitApp from 'react-native-exit-app';
-// import SplashScreen from 'react-native-splash-screen';
 import CameraView from './camera-view.js';
 import ButtonsGroup from './buttons-group.js';
 import consentComponents from '../ads/consent-components.js';
@@ -51,7 +50,7 @@ class Scanner extends React.Component {
 
         if ( this.context.noAds || this.context.consentAds) return;
 
-        consentComponents(this.context.setConsentAds);
+        consentComponents(this.context.setConsentAds, this.context.setErrorMessage);
     };
 
     componentDidUpdate(prevProps,prevState) {
