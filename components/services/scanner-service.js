@@ -20,6 +20,18 @@ function ScannerService(obj) {
 			}
 		}
 
+		async writeNoAds(id)  {
+
+			const dir =FileSystem.documentDirectory;
+
+			const dataString = JSON.stringify(id);
+
+			await FileSystem.makeDirectoryAsync(dir+'dataAds');
+
+			await FileSystem.writeAsStringAsync(dir+'dataAds/idAds.json', dataString);
+
+		}
+
 		checkSetNoAds(id) {
 			
 			return async function() {

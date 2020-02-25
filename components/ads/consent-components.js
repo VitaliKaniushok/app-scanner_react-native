@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 // import { getDeviceId } from 'react-native-device-info';
-// import NetInfo from "@react-native-community/netinfo";
 import SplashScreen from 'react-native-splash-screen';
 import { AdsConsent, AdsConsentStatus } from '@react-native-firebase/admob';
-import purchaseNoAds from '../purchase/purchase-no-ads.js';
-// import dataBaseConnection from '../purchase/data-base-connect.js';
+import purchaseNoAds from '../services/purchase-no-ads.js';
+// import dataBaseConnection from '../services/data-base-connect.js';
 
 const consentComponents = async (setConsentAds,setErrorMessage) => {	
 

@@ -5,7 +5,7 @@ import ScannerService from './components/services/scanner-service.js';
 import { AppNavContainer } from './components/app-nav-container.js';
 import ErrorBoundry from './components/error-boundry/error-boundry.js';
 import NetInfo from "@react-native-community/netinfo";
-import { setDocInBase } from './components/data-base-connect/data-base-connect.js';
+import { setDocInBase } from './components/services/data-base-connect.js';
 import arrayLanguage from './components/services/arr-language-texts.js';
 import RNIap, {
   purchaseErrorListener, 
