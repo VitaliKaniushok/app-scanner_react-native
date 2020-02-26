@@ -5,7 +5,7 @@ import ScannerService from './components/services/scanner-service.js';
 import { AppNavContainer } from './components/app-nav-container.js';
 import ErrorBoundry from './components/error-boundry/error-boundry.js';
 import NetInfo from "@react-native-community/netinfo";
-import { setDocInBase } from './components/services/data-base-connect.js';
+import { setDocInBase, checkId } from './components/services/data-base-connect.js';
 import arrayLanguage from './components/services/arr-language-texts.js';
 import RNIap, {
   purchaseErrorListener, 
@@ -75,29 +75,69 @@ export default class TwoMillion extends React.Component {
 
   unsubscribe = ()=>{};
 
-  UNSAFE_componentWillMount() {
 
-    // let netinfo;
+  // g =(s) => {
 
-    // (async ()=>{
+  //   Alert.alert('ackResult',s.toString());
+  // }
 
-    //   netInfo = await NetInfo.fetch().then(state => {
 
-    //     return state.isInternetReachable
 
-    //   })
+  async UNSAFE_componentWillMount() {   
 
-    // })
+    try { 
+      // Alert.alert('productId', 'productId.toString()')
 
-    // if ( netInfo ) { 
+      // await RNIap.initConnection() ;      
 
-    //   // connect to server
-    //   this.scannerService.checkSetNoAds(null);
-    // }
+      const netInfo = await NetInfo.fetch().then(state => {
 
-    // this.scannerService.checkRecordIdAds();
+        return state.isInternetReachable;
 
-    if ( this.state.noAds ) return;
+      });      
+
+      if ( netInfo ) { 
+        
+        const productId = await checkId();
+
+
+        if ( productId ) {
+// this.setState({ errorMessage: productId });
+// Alert.alert('DID',productId);
+          await this.scannerService.writeNoAds(productId);
+          this.setState({ noAds:true, consentAds:true });
+          return
+          
+// this.setState({ errorMessage: JSON.stringify(productId) });
+          // return;
+
+        } else {
+//           // Alert.alert('No',this.state.noAds);
+// // this.setState({ errorMessage: JSON.stringify(productId), noAds:true });
+          await this.scannerService.writeNoAds();
+          this.setState({ noAds:false });
+//           // Alert.alert('NoproductId', productId.toString())
+        }
+
+      } else {
+
+        const productId = await this.scannerService.getNoAds();
+
+        if ( productId ) {
+Alert.alert('productId Mobile', productId.toString())
+          this.setState({ noAds:true, consentAds:true });
+          return;
+
+        } else {
+// Alert.alert('NO productId Mobile', productId.toString())
+          this.setState({ noAds:false, consentAds:false, errorMessage:"No internet connection" });
+        }
+      }
+
+    } catch(error) {
+
+      this.setState({ errorMessage: "Component will mount" });
+    }
 
     this.unsubscribe = NetInfo.addEventListener(state => {
 
@@ -115,44 +155,62 @@ export default class TwoMillion extends React.Component {
 
   componentDidMount() {
 
-    try {
+    // try {
 
-     (async function() {await RNIap.initConnection()} )();
+    //  (async function() {await RNIap.initConnection() ;
 
-    } catch(error) {
+    //   // const netInfo = await NetInfo.fetch().then(state => {
+    //   //     return state.isInternetReachable;
+    //   // });   
+
+    //   // Alert.alert('DID Moun', netInfo.toString())
+
+    // } )();
+
+    // } catch(error) {
      
-      this.setState({ setErrorMessage: error })
-    }
+    //   this.setState({ setErrorMessage: "init connection Play Service" });
+    // }
 
-    this.purchaseUpdate = purchaseUpdatedListener((purchase: InAppPurchase | ProductPurchase ) => {
+    this.purchaseUpdate = purchaseUpdatedListener(
+      async (purchase: InAppPurchase | ProductPurchase ) => {
       
-      const receipt = purchase.transactionReceipt;
+        const receipt = purchase.transactionReceipt;
 
         if (receipt) {
 
           try {
 
-            setDocInBase(receipt);
+              const nameDocument = JSON.parse(receipt).orderId;
 
-            Alert.alert('receipt',receipt.toString());
-            
-            // RNIap.acknowledgePurchaseAndroid(purchase.purchaseToken);
-            
-            // const ackResult = awaitRNIap.finishTransaction(purchase, false);
+              setDocInBase(nameDocument,receipt);              
+              
+              // RNIap.acknowledgePurchaseAndroid(purchase.purchaseToken);
+              
+              // const ackResult = await RNIap.finishTransaction(purchase, false);
 
-          } catch (error) {
+              // Alert.alert('ackResult',receipt.toString());
 
-            this.setState({ setErrorMessage: error })
+              await this.scannerService.writeNoAds(nameDocument);
+
+              this.setState({
+                noAds:true, 
+                consentAds:true,
+              })
+
+          } catch(error) {
+
+            this.setState({ setErrorMessage: "Dont  purchase" })
           }
 
         } else {
 
-          this.setState({ setErrorMessage: 'No purchase' })
+          this.setState({ setErrorMessage: 'No receipt' })
         }
     });
 
     this.purchaseError = purchaseErrorListener((error: PurchaseError) => {
-      this.setState({ setErrorMessage: error })
+      this.setState({ setErrorMessage: "Error purchase" })
     });
   }  
 

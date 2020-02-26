@@ -33,7 +33,7 @@ const InterstitialAdComponents = (props) => {
 			    
 			} else if (type === AdEventType.ERROR) { 	
 
-			  	errorMessage = error;		  	
+			  	errorMessage = error.toString();		  	
 			    
 			} else if (type === AdEventType.CLOSED) {
 
@@ -50,7 +50,7 @@ const InterstitialAdComponents = (props) => {
 
 	if (errorMessage) {	
 
-		setErrorMessage(errorMessage)	
+		setErrorMessage('Interstitial Ads')	
 
 		return (
 			null		

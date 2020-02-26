@@ -6,7 +6,7 @@ export default class ErrorBoundry extends Component {
   state = {
    	hasError:false
   }
-
+  
   componentDidCath() {
 
  		this.setState({ 
@@ -14,11 +14,11 @@ export default class ErrorBoundry extends Component {
  		});
   }
 
-  render() {       
+  render() {      
 
   	if (this.state.hasError || this.props.errorMessage) {
-  		return <ErrorMessage props={this.props} />
-  	};
+  		return <ErrorMessage message={this.props.errorMessage} />
+  	}
 
   	return this.props.children;  
   }

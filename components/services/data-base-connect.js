@@ -1,30 +1,26 @@
 import { Alert } from 'react-native';
+import * as RNIap from 'react-native-iap';
 import firestore from '@react-native-firebase/firestore';
  
-const setDocInBase = async(obj) => {
-
-	const nameDocument = JSON.parse(obj).orderId;
+const setDocInBase = async(nameDocument,obj) => {	
 
 	await firestore().doc('data-receipt/'+nameDocument).set({
 		receipt: obj
-	});
-
-	// Alert.alert('nameDocument',toString(q));
-
-	// await firestore()
-	// 	.doc('data-receipt/receipt')
-	// 	.collection(nameCol)
-	// 	.doc(nameDoc).set({
-	// 	 		name:'test'
-	// 	 	});
-
-
-	// const g = docRef.collection(nameCol)
-	// 	.doc(nameDoc).set({
-	//  		name:'test'
-	//  	});
-
-	// const documentSnapshot = await firestore()
-	 	// Alert.aletr('docSnapshot',JSON.stringify(documentSnapshot))
+	});	
 }
-export {setDocInBase};
+
+const checkId = async() => {
+
+	const purchases = await RNIap.getAvailablePurchases(); 	
+
+	if ( purchases.length ) {
+
+    	const jj = purchases[0].orderId;
+
+    	return jj;
+    	
+	}
+
+    return null;
+}
+export {setDocInBase,checkId};

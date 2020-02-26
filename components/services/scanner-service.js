@@ -24,91 +24,119 @@ function ScannerService(obj) {
 
 			const dir =FileSystem.documentDirectory;
 
-			const dataString = JSON.stringify(id);
-
-			await FileSystem.makeDirectoryAsync(dir+'dataAds');
-
-			await FileSystem.writeAsStringAsync(dir+'dataAds/idAds.json', dataString);
-
-		}
-
-		checkSetNoAds(id) {
+			const dataNames = await FileSystem.getInfoAsync(dir+'msmCk/msmCk.json');
 			
-			return async function() {
 
-				if ( !id ) return;
-				
-				const dir =FileSystem.documentDirectory;
+			if ( id ) {
 
-			    const dataNames = await FileSystem.getInfoAsync(dir+'dataAds/idAds.json');        
-			        
-			    if ( !dataNames.exists ) {
+				const dataString = JSON.stringify(id);
 
-			    	const newData = {
-			    		idAds:id
-			    	}
+				if ( dataNames.exists ) {
 
-			    	const dataString = JSON.stringify(newData);				    	
+					await FileSystem.deleteAsync(dir+'msmCk/msmCk.json');
+				}
 
-			    	await FileSystem.makeDirectoryAsync(dir+'dataAds');
+				// await FileSystem.makeDirectoryAsync(dir+'msmCk');
 
-			        await FileSystem.writeAsStringAsync(dir+'dataAds/idAds.json', dataString);
+				await FileSystem.writeAsStringAsync(dir+'msmCk/msmCk.json', dataString);
 
-			        obj.setState({ 			      		
-			      		noAds: true,
-			      		consentAds:true 
-			      	})
-			    } 
-			    else {
+			} else {
 
-			    	const jsonData = await FileSystem.readAsStringAsync(dir+'dataAds/idAds.json');
-
-			    	const parseData = JSON.parse(jsonData);				    	
-
-			    	if ( parseData.idAds === id ) {
-
-			    		obj.setState({ 			      		
-				      		noAds: true,
-				      		consentAds:true
-				      	})
-
-			    	} else {
-
-			    		await FileSystem.deleteAsync(dir+'dataAds');
-
-			    		obj.setState({ 			      		
-				      		noAds: false 
-				      	})
-			    	}  
-			    }						
+				await FileSystem.deleteAsync(dir+'msmCk/msmCk.json');
 			}
 		}
 
-		checkRecordIdAds() {
+		async getNoAds()  {			
+
+			const dir =FileSystem.documentDirectory;
+
+			const dataNames = await FileSystem.getInfoAsync(dir+'msmCk/msmCk.json');
+
+			if ( !dataNames.exists ) return null;
+
+			const jsonData = await FileSystem.readAsStringAsync(dir+'msmCk/msmCk.json');
+
+			return  JSON.parse(jsonData);
+
+		}
+
+		// checkNoAds(id) {
 			
-			return async function() {
+		// 	return async function() {
 
-				if ( obj.state.noAds) return;
+		// 		if ( !id ) return;
 				
-				const dir =FileSystem.documentDirectory;
+		// 		const dir =FileSystem.documentDirectory;
 
-			    const dataNames = await FileSystem.getInfoAsync(dir+'dataAds/idAds.json');        
+		// 	    const dataNames = await FileSystem.getInfoAsync(dir+'msmCk/msmCk.json');        
 			        
-			    if ( !dataNames.exists ) {			    	
+		// 	    if ( !dataNames.exists ) {
 
-			        obj.setState({ 			      		
-			      		noAds: false			      		
-			      	})
+		// 	    	const newData = {
+		// 	    		idAds:id
+		// 	    	}
 
-			    } else {
+		// 	    	const dataString = JSON.stringify(newData);				    	
 
-		    		obj.setState({ 			      		
-			      		noAds: true 
-			      	})
+		// 	    	await FileSystem.makeDirectoryAsync(dir+'msmCk');
+
+		// 	        await FileSystem.writeAsStringAsync(dir+'msmCk/msmCk.json', dataString);
+
+		// 	        obj.setState({ 			      		
+		// 	      		noAds: true,
+		// 	      		consentAds:true 
+		// 	      	})
+		// 	    } 
+		// 	    else {
+
+		// 	    	const jsonData = await FileSystem.readAsStringAsync(dir+'msmCk/msmCk.json');
+
+		// 	    	const parseData = JSON.parse(jsonData);				    	
+
+		// 	    	if ( parseData.idAds === id ) {
+
+		// 	    		obj.setState({ 			      		
+		// 		      		noAds: true,
+		// 		      		consentAds:true
+		// 		      	})
+
+		// 	    	} else {
+
+		// 	    		await FileSystem.deleteAsync(dir+'msmCk');
+
+		// 	    		obj.setState({ 			      		
+		// 		      		noAds: false 
+		// 		      	})
+		// 	    	}  
+		// 	    }						
+		// 	}
+		// }
+
+		// checkRecordIdAds() {
+			
+		// 	return async function() {
+
+		// 		if ( obj.state.noAds) return;
+				
+		// 		const dir =FileSystem.documentDirectory;
+
+		// 	    const dataNames = await FileSystem.getInfoAsync(dir+'msmCk/msmCk.json');        
+			        
+		// 	    if ( !dataNames.exists ) {			    	
+
+		// 	        obj.setState({ 			      		
+		// 	      		noAds: false			      		
+		// 	      	})
+
+		// 	    } else {
+
+		//     		obj.setState({ 			      		
+		// 	      		noAds: true 
+		// 	      	})
 			    	
-			    }						
-			}
-		}
+		// 	    }						
+		// 	}
+		// }
 
 		setConsentAds() {
 

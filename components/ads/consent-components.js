@@ -29,8 +29,7 @@ const consentComponents = async (setConsentAds,setErrorMessage) => {
 
 		if (formResult.userPrefersAdFree) {
 
-			SplashScreen.hide();
-			// dataBaseConnection();							
+			SplashScreen.hide();										
 			purchaseNoAds(setErrorMessage);
 			return;
 		}
