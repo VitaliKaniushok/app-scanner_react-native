@@ -1,6 +1,7 @@
 import React from 'react';
 import { StatusBar, View, Alert } from 'react-native';
 import { ContextApi } from './components/context-api.js';
+import SplashScreen from 'react-native-splash-screen';
 import ScannerService from './components/services/scanner-service.js';
 import { AppNavContainer } from './components/app-nav-container.js';
 import ErrorBoundry from './components/error-boundry/error-boundry.js';
@@ -75,41 +76,31 @@ export default class TwoMillion extends React.Component {
 
   unsubscribe = ()=>{};
 
-
-  // g =(s) => {
-
-  //   Alert.alert('ackResult',s.toString());
-  // }
-
-
-
   async UNSAFE_componentWillMount() {   
 
     try { 
-      // Alert.alert('productId', 'productId.toString()')
-
-      // await RNIap.initConnection() ;      
+     
+      await RNIap.initConnection();      
 
       const netInfo = await NetInfo.fetch().then(state => {
 
         return state.isInternetReachable;
 
-      });      
+      });   
+
+      // const netInfo =false;   
 
       if ( netInfo ) { 
         
         const productId = await checkId();
 
-
         if ( productId ) {
 // this.setState({ errorMessage: productId });
 // Alert.alert('DID',productId);
           await this.scannerService.writeNoAds(productId);
-          this.setState({ noAds:true, consentAds:true });
-          return
+          return this.setState({ noAds:true, consentAds:true });          
           
-// this.setState({ errorMessage: JSON.stringify(productId) });
-          // return;
+// this.setState({ errorMessage: JSON.stringify(productId) });          
 
         } else {
 //           // Alert.alert('No',this.state.noAds);
@@ -121,27 +112,31 @@ export default class TwoMillion extends React.Component {
 
       } else {
 
-        const productId = await this.scannerService.getNoAds();
-
+        const productId =  await this.scannerService.getNoAds();
+        // const productId = false;
+// Alert.alert('productId Mobile', productId.toString())
         if ( productId ) {
-Alert.alert('productId Mobile', productId.toString())
+// Alert.alert('productId Mobile', productId.toString())
           this.setState({ noAds:true, consentAds:true });
-          return;
+          return SplashScreen.hide();
 
         } else {
-// Alert.alert('NO productId Mobile', productId.toString())
-          this.setState({ noAds:false, consentAds:false, errorMessage:"No internet connection" });
+Alert.alert('NO productId Mobile2', productId.toString())
+          this.setState({ noAds:false, consentAds:false, errorMessage:JSON.stringify(productId) });
         }
       }
 
     } catch(error) {
 
       this.setState({ errorMessage: "Component will mount" });
+      
     }
 
     this.unsubscribe = NetInfo.addEventListener(state => {
 
       if (!state.isInternetReachable) {
+
+        if ( this.state.errorMessage ) return;
 
         return this.setState({errorMessage:"No internet connection"});
 

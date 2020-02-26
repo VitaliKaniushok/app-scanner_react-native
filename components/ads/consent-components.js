@@ -4,7 +4,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { AdsConsent, AdsConsentStatus } from '@react-native-firebase/admob';
 import purchaseNoAds from '../services/purchase-no-ads.js';
-// import dataBaseConnection from '../services/data-base-connect.js';
 
 const consentComponents = async (setConsentAds,setErrorMessage) => {	
 
@@ -32,10 +31,7 @@ const consentComponents = async (setConsentAds,setErrorMessage) => {
 			SplashScreen.hide();										
 			purchaseNoAds(setErrorMessage);
 			return;
-		}
-
-		// The user requested non-personalized or personalized ads
-		// const status = formResult.status;
+		}	
 	}
 
 	setConsentAds();

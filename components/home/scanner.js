@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, BackHandler, Text } from 'react-native';
+import { View, BackHandler, Text, Alert } from 'react-native';
 import { ContextApi } from '../context-api.js';
 import * as FaceDetector from 'expo-face-detector';
 import RNExitApp from 'react-native-exit-app';
@@ -48,8 +48,8 @@ class Scanner extends React.Component {
           return false;
         });
 
-        if ( this.context.noAds || this.context.consentAds) return;
-
+        if ( this.context.noAds || this.context.consentAds || this.context.errorMessage ) return;
+Alert.alert("Message",JSON.stringify(this.context.errorMessage))
         consentComponents(this.context.setConsentAds, this.context.setErrorMessage);
     };
 

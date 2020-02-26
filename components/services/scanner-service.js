@@ -56,7 +56,9 @@ function ScannerService(obj) {
 
 			const jsonData = await FileSystem.readAsStringAsync(dir+'msmCk/msmCk.json');
 
-			return  JSON.parse(jsonData);
+			const parceId = JSON.parse(jsonData);
+
+			return parceId;
 
 		}
 
