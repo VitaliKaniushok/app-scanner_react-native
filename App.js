@@ -21,6 +21,8 @@ export default class TwoMillion extends React.Component {
   
   state = {
 
+    isLoaded:true,
+
     errorMessage:'',
     setErrorMessage:this.scannerService.setErrorMessage(),
 
@@ -76,7 +78,7 @@ export default class TwoMillion extends React.Component {
 
   unsubscribe = ()=>{};
 
-  async UNSAFE_componentWillMount() {   
+  async checkIsPurchase() {   
 
     try { 
      
@@ -98,7 +100,7 @@ export default class TwoMillion extends React.Component {
 // this.setState({ errorMessage: productId });
 // Alert.alert('DID',productId);
           await this.scannerService.writeNoAds(productId);
-          return this.setState({ noAds:true, consentAds:true });          
+          return this.setState({ isLoaded:false, noAds:true, consentAds:true });          
           
 // this.setState({ errorMessage: JSON.stringify(productId) });          
 
@@ -106,67 +108,51 @@ export default class TwoMillion extends React.Component {
 //           // Alert.alert('No',this.state.noAds);
 // // this.setState({ errorMessage: JSON.stringify(productId), noAds:true });
           await this.scannerService.writeNoAds();
-          this.setState({ noAds:false });
+          this.setState({ isLoaded:false, noAds:false });
 //           // Alert.alert('NoproductId', productId.toString())
         }
 
       } else {
 
-        const productId =  await this.scannerService.getNoAds();
-        // const productId = false;
+        // const productId =  await this.scannerService.getNoAds();
+        const productId = true;
 // Alert.alert('productId Mobile', productId.toString())
         if ( productId ) {
 // Alert.alert('productId Mobile', productId.toString())
-          this.setState({ noAds:true, consentAds:true });
+          this.setState({ isLoaded:false, noAds:true, consentAds:true });
           return SplashScreen.hide();
 
         } else {
-Alert.alert('NO productId Mobile2', productId.toString())
-          this.setState({ noAds:false, consentAds:false, errorMessage:JSON.stringify(productId) });
+// Alert.alert('NO productId Mobile2', JSON.stringify(productId))
+          this.setState({ isLoaded:false, noAds:false, consentAds:false, errorMessage:JSON.stringify(productId) });
         }
       }
 
     } catch(error) {
 
-      this.setState({ errorMessage: "Component will mount" });
+      this.setState({ isLoaded:false, errorMessage: "check is purchase" });
       
-    }
-
-    this.unsubscribe = NetInfo.addEventListener(state => {
-
-      if (!state.isInternetReachable) {
-
-        if ( this.state.errorMessage ) return;
-
-        return this.setState({errorMessage:"No internet connection"});
-
-      } else {
-
-        return this.setState({errorMessage:''});
-      }
-
-    });
+    }    
   }
 
   componentDidMount() {
 
-    // try {
+    this.checkIsPurchase();
 
-    //  (async function() {await RNIap.initConnection() ;
+// ----CONNECT INTERNET LISTENER
+    this.unsubscribe = NetInfo.addEventListener(state => {
 
-    //   // const netInfo = await NetInfo.fetch().then(state => {
-    //   //     return state.isInternetReachable;
-    //   // });   
+      if (!state.isInternetReachable) {
+        
+        return this.setState({errorMessage:"No internet connection"});
 
-    //   // Alert.alert('DID Moun', netInfo.toString())
+      } else {
 
-    // } )();
+        this.setState({errorMessage:''});        
+      }
 
-    // } catch(error) {
-     
-    //   this.setState({ setErrorMessage: "init connection Play Service" });
-    // }
-
+    });
+// ----PURCHASE LISTENER 
     this.purchaseUpdate = purchaseUpdatedListener(
       async (purchase: InAppPurchase | ProductPurchase ) => {
       
@@ -195,19 +181,26 @@ Alert.alert('NO productId Mobile2', productId.toString())
 
           } catch(error) {
 
-            this.setState({ setErrorMessage: "Dont  purchase" })
+            this.setState({ errorMessage: "Dont  purchase" })
           }
 
         } else {
 
-          this.setState({ setErrorMessage: 'No receipt' })
+          this.setState({ errorMessage: 'No receipt' })
         }
     });
 
     this.purchaseError = purchaseErrorListener((error: PurchaseError) => {
-      this.setState({ setErrorMessage: "Error purchase" })
+      this.setState({ errorMessage: "Error purchase" })
     });
-  }  
+  }
+
+  componentDidUpdate(prevProps,prevState) {
+
+    if( !prevState.errorMessage === !this.state.errorMessage ) return;
+    // Alert.alert('DDD',prevState.errorMessage.toString()+' '+this.state.errorMessage);
+      this.checkIsPurchase();
+  }
 
   componentWillUnmount() {
     this.unsubscribe();
@@ -223,6 +216,11 @@ Alert.alert('NO productId Mobile2', productId.toString())
   }
 
   render() {
+
+    if ( this.state.isLoaded ) {
+
+      return <View style={{flex:1}} />
+    }
     
     return (
 

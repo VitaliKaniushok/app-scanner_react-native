@@ -42,7 +42,10 @@ function ScannerService(obj) {
 
 			} else {
 
-				await FileSystem.deleteAsync(dir+'msmCk/msmCk.json');
+				if ( dataNames.exists ) {
+
+					await FileSystem.deleteAsync(dir+'msmCk/msmCk.json');
+				}
 			}
 		}
 

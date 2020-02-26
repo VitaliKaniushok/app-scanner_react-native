@@ -49,7 +49,7 @@ class Scanner extends React.Component {
         });
 
         if ( this.context.noAds || this.context.consentAds || this.context.errorMessage ) return;
-Alert.alert("Message",JSON.stringify(this.context.errorMessage))
+// Alert.alert("Message",JSON.stringify(this.context.errorMessage))
         consentComponents(this.context.setConsentAds, this.context.setErrorMessage);
     };
 
