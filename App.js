@@ -1,7 +1,7 @@
 import React from 'react';
 import { StatusBar, View, Alert } from 'react-native';
 import { ContextApi } from './components/context-api.js';
-// import SplashScreen from 'react-native-splash-screen';
+import SplashScreen from 'react-native-splash-screen';
 import ScannerService from './components/services/scanner-service.js';
 import { AppNavContainer } from './components/app-nav-container.js';
 import ErrorBoundry from './components/error-boundry/error-boundry.js';
@@ -76,73 +76,96 @@ export default class TwoMillion extends React.Component {
     appText: arrayLanguage.en
   }
 
-  unsubscribe = ()=>{};
-
-  checkIsPurchase = async ()=> {   
+  async checkIsPurchase(){   
 
     try { 
      
-      // await RNIap.initConnection();      
+      const netInfo = await NetInfo.fetch().then(state => {
 
-      // const netInfo = await NetInfo.fetch().then(state => {
+        return state.isInternetReachable;
+      });          
 
-      //   return state.isInternetReachable;
-
-      // });
-
-      // ----CONNECT INTERNET LISTENER
-      this.unsubscribe = NetInfo.addEventListener(state => {
-
-        if (!state.isInternetReachable) {
-          
-          return this.setState({errorMessage:"No internet connection"});
-
-        } else { this.setState({errorMessage:''}); }
-
-      });
-
-      if ( netInfo ) { 
+      if ( 'netInfo' ) { 
         
         const productId = await checkId();
 
-        if ( productId ) {
+        if ( 'productId' ) {
 
-          await this.scannerService.writeNoAds(productId);         
-          return this.setState({ isLoaded:false, noAds:true, consentAds:true });
+          await this.scannerService.writeNoAds(productId);
+
+          if ( this.state.isLoaded ) { SplashScreen.hide() } 
+          this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage:'' });
+          return true;
+
+          // SplashScreen.hide();
+          // return this.setState({ isLoaded:false, errorMessage:JSON.stringify(productId) });
 
         } else {
 
           await this.scannerService.writeNoAds();
-          this.setState({ isLoaded:false, noAds:false });
+          // this.setState({ isLoaded:false, noAds:false, errorMessage:'' });
+          // return false;
 
+          SplashScreen.hide();
+          return this.setState({ isLoaded:false, errorMessage:JSON.stringify(productId)+"  no" });
         }
 
       } else {
 
-        // const productId =  await this.scannerService.getNoAds();
-
-        const productId = true;
+        const productId =  await this.scannerService.getNoAds();        
 
         if ( productId ) {
- // Alert.alert('id', JSON.stringify(productId))
-          this.setState({ isLoaded:false, noAds:true, consentAds:true });
-          return SplashScreen.hide();
+
+          // if ( this.state.isLoaded ) { SplashScreen.hide() } 
+          // this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage:'' });
+          // return true;         
+
+          SplashScreen.hide();
+          return this.setState({ isLoaded:false, errorMessage:JSON.stringify(productId)+"  noInternet" });
 
         } else {
-// Alert.alert('id', JSON.stringify(productId))
-          this.setState({ isLoaded:false, noAds:false, consentAds:false, errorMessage:'No internet connection id' });
+
+          // this.setState({ isLoaded:false, noAds:false, consentAds:false, errorMessage:"No internet" });
+          // return false;
+          SplashScreen.hide();
+          return this.setState({ isLoaded:false, errorMessage:JSON.stringify(productId)+"  noInternet" });
         }
       }
 
     } catch(error) {
 
-      this.setState({ isLoaded:false, errorMessage: "check is purchase" });      
+      this.setState({ isLoaded:false, errorMessage: error.message });
+      return false;      
     }    
   }
 
-  async componentDidMount() {
+  async componentDidMount() {    
 
-    await this.checkIsPurchase();    
+    const isNoAds = await this.checkIsPurchase();
+
+    if ( isNoAds ) return;
+
+    try {
+
+      await RNIap.initConnection();
+
+    } catch (err) {
+
+      this.setState({ isLoaded:false, errorMessage: "No connection to Play Services" });
+    } 
+
+    // ----CONNECT INTERNET LISTENER
+    this.unsubscribe = NetInfo.addEventListener(state => {
+
+      if (this.state.noAds) return;
+
+      if (!state.isInternetReachable) {
+        
+        return this.setState({errorMessage:"No connection to internet"});
+
+      } else { this.setState({errorMessage:''}); }
+
+    });   
 
     // ----PURCHASE LISTENER 
     this.purchaseUpdate = purchaseUpdatedListener(
@@ -167,9 +190,8 @@ export default class TwoMillion extends React.Component {
               this.setState({ noAds:true, consentAds:true });
 
           } catch(error) { 
-            Alert.alert('dont purch', JSON.stringify(receipt))
-
-            this.setState({ errorMessage: "Dont  purchase" })
+           
+            this.setState({ errorMessage: "No purchase" })
           }
 
         } else { this.setState({ errorMessage: 'No receipt' }) }
@@ -177,28 +199,15 @@ export default class TwoMillion extends React.Component {
 
     this.purchaseError = purchaseErrorListener((error: PurchaseError) => {
       this.setState({ errorMessage: "Error purchase" })
-    });
+    });       
   }
 
   async componentDidUpdate(prevProps,prevState) {
 
-    if( !prevState.errorMessage === !this.state.errorMessage ) return;
+    if( !prevState.errorMessage === !this.state.errorMessage ) return;   
 
-     this.unsubscribe();
-
-      if ( this.state.errorMessage ) {        
-
-        if (this.purchaseUpdate) {
-          this.purchaseUpdate.remove();
-          this.purchaseUpdate = null;
-        }
-
-        if (this.purchaseError) {
-          this.purchaseError.remove();
-          this.purchaseError = null;
-        }
-
-        this.setState({ isLoaded:true });
+      if ( this.state.errorMessage ) {
+        
         return await this.checkIsPurchase();
       }      
   }
@@ -220,7 +229,7 @@ export default class TwoMillion extends React.Component {
 
     if ( this.state.isLoaded ) {
 
-      return <View style={{flex:1}} />
+      return <View style={{flex:1,backgroundColor: '#f1f1f1'}} />
     }
     
     return (

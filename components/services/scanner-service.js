@@ -3,7 +3,6 @@ import { Camera } from 'expo-camera';
 import textDefinition from './text-definition.js';
 import arrayLanguage from './arr-language-texts.js';
 import {FileSystem} from 'react-native-unimodules';
-// import NetInfo from "@react-native-community/netinfo";
 
 function ScannerService(obj) {
 
@@ -63,84 +62,6 @@ function ScannerService(obj) {
 			return parceId;
 
 		}
-
-		// checkNoAds(id) {
-			
-		// 	return async function() {
-
-		// 		if ( !id ) return;
-				
-		// 		const dir =FileSystem.documentDirectory;
-
-		// 	    const dataNames = await FileSystem.getInfoAsync(dir+'msmCk/msmCk.json');        
-			        
-		// 	    if ( !dataNames.exists ) {
-
-		// 	    	const newData = {
-		// 	    		idAds:id
-		// 	    	}
-
-		// 	    	const dataString = JSON.stringify(newData);				    	
-
-		// 	    	await FileSystem.makeDirectoryAsync(dir+'msmCk');
-
-		// 	        await FileSystem.writeAsStringAsync(dir+'msmCk/msmCk.json', dataString);
-
-		// 	        obj.setState({ 			      		
-		// 	      		noAds: true,
-		// 	      		consentAds:true 
-		// 	      	})
-		// 	    } 
-		// 	    else {
-
-		// 	    	const jsonData = await FileSystem.readAsStringAsync(dir+'msmCk/msmCk.json');
-
-		// 	    	const parseData = JSON.parse(jsonData);				    	
-
-		// 	    	if ( parseData.idAds === id ) {
-
-		// 	    		obj.setState({ 			      		
-		// 		      		noAds: true,
-		// 		      		consentAds:true
-		// 		      	})
-
-		// 	    	} else {
-
-		// 	    		await FileSystem.deleteAsync(dir+'msmCk');
-
-		// 	    		obj.setState({ 			      		
-		// 		      		noAds: false 
-		// 		      	})
-		// 	    	}  
-		// 	    }						
-		// 	}
-		// }
-
-		// checkRecordIdAds() {
-			
-		// 	return async function() {
-
-		// 		if ( obj.state.noAds) return;
-				
-		// 		const dir =FileSystem.documentDirectory;
-
-		// 	    const dataNames = await FileSystem.getInfoAsync(dir+'msmCk/msmCk.json');        
-			        
-		// 	    if ( !dataNames.exists ) {			    	
-
-		// 	        obj.setState({ 			      		
-		// 	      		noAds: false			      		
-		// 	      	})
-
-		// 	    } else {
-
-		//     		obj.setState({ 			      		
-		// 	      		noAds: true 
-		// 	      	})
-			    	
-		// 	    }						
-		// 	}
-		// }
 
 		setConsentAds() {
 
