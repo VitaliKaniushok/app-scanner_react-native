@@ -24,8 +24,7 @@ function ScannerService(obj) {
 
 			const dir =FileSystem.documentDirectory;
 
-			const dataNames = await FileSystem.getInfoAsync(dir+'msmCk/msmCk.json');
-			
+			const dataNames = await FileSystem.getInfoAsync(dir+'msmCk/msmCk.json');			
 
 			if ( id ) {
 
@@ -36,7 +35,7 @@ function ScannerService(obj) {
 					await FileSystem.deleteAsync(dir+'msmCk/msmCk.json');
 				}
 
-				// await FileSystem.makeDirectoryAsync(dir+'msmCk');
+				await FileSystem.makeDirectoryAsync(dir+'msmCk');
 
 				await FileSystem.writeAsStringAsync(dir+'msmCk/msmCk.json', dataString);
 
