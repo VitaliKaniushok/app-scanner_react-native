@@ -15,7 +15,7 @@ const purchaseNoAds = async (setErrorMessage) => {
 
     } catch(err) {
 
-      setErrorMessage(err);
+      setErrorMessage(JSON.stringify(err.message));
      
     }  
 }

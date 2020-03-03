@@ -31,7 +31,7 @@ function ScannerService(obj) {
 
 				if ( dataNames.exists ) {
 
-					await FileSystem.deleteAsync(dir+'msmCk/msmCk.json');
+					await FileSystem.deleteAsync(dir+'msmCk');
 				}
 
 				await FileSystem.makeDirectoryAsync(dir+'msmCk');
@@ -42,7 +42,7 @@ function ScannerService(obj) {
 
 				if ( dataNames.exists ) {
 
-					await FileSystem.deleteAsync(dir+'msmCk/msmCk.json');
+					await FileSystem.deleteAsync(dir+'msmCk');
 				}
 			}
 		}

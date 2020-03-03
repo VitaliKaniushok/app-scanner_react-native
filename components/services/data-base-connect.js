@@ -15,10 +15,10 @@ const checkId = async() => {
 
 	if ( purchases.length ) {
 
-    	const jj = purchases[0].orderId;
+    	const jj = purchases[0].purchaseToken;
 
     	return jj;
-    	
+    	// return await RNIap.consumePurchaseAndroid(jj);    	
 	}
 
     return null;
