@@ -21,7 +21,7 @@ export default class TwoMillion extends React.Component {
   
   state = {
 
-    isLoaded:false,
+    isLoaded:true,
 
     errorMessage:'',
     setErrorMessage:this.scannerService.setErrorMessage(),
@@ -76,65 +76,44 @@ export default class TwoMillion extends React.Component {
     appText: arrayLanguage.en
   }
 
+  unsubscribe = () => {};
+
   async checkIsPurchase(){   
 
     try { 
-     // await checkId();
-      // const netInfo = await NetInfo.fetch().then(state => {
+      // return await checkId();
 
-      //   return state.isInternetReachable;
-      // });          
+      const productId = await checkId();
 
-      // if ( netInfo ) { 
-        
-        // const productId = await checkId();
+      // return this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage: JSON.stringify(productId) });
 
-        // if ( productId ) {
+      if ( productId ) {
 
-          // await this.scannerService.writeNoAds(productId);
+        if ( this.state.isLoaded ) { SplashScreen.hide() }
+        // await this.scannerService.writeNoAds(productId);
+        return this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage:'' });        
+      }
 
-          // if ( this.state.isLoaded ) { SplashScreen.hide() } 
-          // this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage:'' });
-          // return true;
+      const netInfo = await NetInfo.fetch().then(state => {
 
-          // SplashScreen.hide();
-          // return this.setState({ isLoaded:false,consentAds:true,noAds:true, errorMessage:JSON.stringify(productId) });
+        return state.isInternetReachable;
+      });      
 
-        // } else {
+      if ( netInfo ) { 
 
-        //   // await this.scannerService.writeNoAds();
-        //   // this.setState({ isLoaded:false, noAds:false, errorMessage:'' });
-        //   // return false;
+        if ( this.state.isLoaded ) { SplashScreen.hide() }
+        return this.setState({ isLoaded:false, noAds:false, errorMessage:"" });       
 
-        // SplashScreen.hide();
-        //   return this.setState({ isLoaded:false,consentAds:true,noAds:true, errorMessage:JSON.stringify(productId)+"  no" });
-        // }
+      } else {
 
-      // } else {
-
-        // const productId =  await this.scannerService.getNoAds();        
-
-        // if ( productId ) {
-
-        //   if ( this.state.isLoaded ) { SplashScreen.hide() } 
-        //   this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage:'' });
-        //   return true;         
-
-        //   // SplashScreen.hide();
-        //   // return this.setState({ isLoaded:false, errorMessage:JSON.stringify(productId)+"  noInternet" });
-
-        // } else {
-
-        //   // this.setState({ isLoaded:false, noAds:false, consentAds:false, errorMessage:"No internet" });
-        //   // return false;
-        //   SplashScreen.hide();
-        //   return this.setState({ isLoaded:false, errorMessage:JSON.stringify(productId)+"  noInternet" });
-        // }
-      // }
+          if ( this.state.isLoaded ) { SplashScreen.hide() }
+          this.setState({ isLoaded:false, noAds:false, consentAds:false, errorMessage:"No internet" });
+          return false;          
+      }
 
     } catch(error) {
 
-      this.setState({ isLoaded:false, errorMessage: error.message });
+      this.setState({ isLoaded:false,consentAds:true,noAds:true, errorMessage: error.message });
       return false;      
     }    
   }
@@ -176,22 +155,29 @@ export default class TwoMillion extends React.Component {
         if (receipt) {
 
           try {
-this.setState({ errorMessage:JSON.stringify('receipt') });
-              // const nameDocument = JSON.parse(receipt).orderId;
 
-              // await setDocInBase(nameDocument,receipt);              
+              const purchaseState = JSON.parse(receipt).purchaseState;
+
+              if ( purchaseState === 0 ) {
+
+                const nameDocument = JSON.parse(receipt).orderId;                            
               
-              // RNIap.acknowledgePurchaseAndroid(purchase.purchaseToken);
-              
-              // const ackResult = await RNIap.finishTransaction(purchase, false);        
+                RNIap.acknowledgePurchaseAndroid(purchase.purchaseToken);
+                
+                const ackResult = await RNIap.finishTransaction(purchase, false);
 
-              // await this.scannerService.writeNoAds(nameDocument);
+                await setDocInBase(nameDocument,receipt);       
 
-              // this.setState({ noAds:true, consentAds:true });
+                await this.scannerService.writeNoAds(nameDocument);
+
+                this.setState({ noAds:true, consentAds:true,errorMessage:"" });                
+              }              
+
+              return this.setState({ errorMessage:  purchaseState })
 
           } catch(error) { 
            
-            this.setState({ errorMessage: "No purchase" })
+            this.setState({ errorMessage: "khk "+error.message })
           }
 
         } else { this.setState({ errorMessage: 'No receipt' }) }

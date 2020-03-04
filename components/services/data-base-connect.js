@@ -15,7 +15,9 @@ const checkId = async() => {
 
 	if ( purchases.length ) {
 
-    	const jj = purchases[0].purchaseToken;
+    	// const jj = purchases[0].purchaseToken;
+		const jj = purchases[0].transactionReceipt;
+
 
     	return jj;
     	// return await RNIap.consumePurchaseAndroid(jj);    	
