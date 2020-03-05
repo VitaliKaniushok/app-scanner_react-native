@@ -6,7 +6,7 @@ import ScannerService from './components/services/scanner-service.js';
 import { AppNavContainer } from './components/app-nav-container.js';
 import ErrorBoundry from './components/error-boundry/error-boundry.js';
 import NetInfo from "@react-native-community/netinfo";
-import { setDocInBase, checkId } from './components/services/data-base-connect.js';
+import { setDocInBase, checkId, resetPurchase } from './components/services/data-base-connect.js';
 import arrayLanguage from './components/services/arr-language-texts.js';
 import RNIap, {
   purchaseErrorListener, 
@@ -76,22 +76,37 @@ export default class TwoMillion extends React.Component {
     appText: arrayLanguage.en
   }
 
-  unsubscribe = () => {};
+  unsubscribeListeners = ()=> {
+
+    if ( this.unsubscribe) {
+      this.unsubscribe();
+    } 
+    if (this.purchaseUpdate) {
+      this.purchaseUpdate.remove();
+      this.purchaseUpdate = null;
+    }
+    if (this.purchaseError) {
+      this.purchaseError.remove();
+      this.purchaseError = null;
+    }
+  }
 
   async checkIsPurchase(){   
 
     try { 
-      // return await checkId();
+      // return await resetPurchase();
 
-      const productId = await checkId();
+      const purchaseState = await checkId();
 
-      // return this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage: JSON.stringify(productId) });
+      // return this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage: JSON.stringify(purchaseState) });
 
-      if ( productId ) {
+      if ( purchaseState === 1 ) {
 
         if ( this.state.isLoaded ) { SplashScreen.hide() }
-        // await this.scannerService.writeNoAds(productId);
-        return this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage:'' });        
+        // await this.scannerService.writeNoAds(purchaseState);
+        this.unsubscribeListeners();
+        this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage:"" });
+        return true;      
       }
 
       const netInfo = await NetInfo.fetch().then(state => {
@@ -101,28 +116,24 @@ export default class TwoMillion extends React.Component {
 
       if ( netInfo ) { 
 
-        if ( this.state.isLoaded ) { SplashScreen.hide() }
-        return this.setState({ isLoaded:false, noAds:false, errorMessage:"" });       
+        this.setState({ isLoaded:false, noAds:false, consentAds:false, errorMessage:"" });
+        return false;     
 
       } else {
 
           if ( this.state.isLoaded ) { SplashScreen.hide() }
-          this.setState({ isLoaded:false, noAds:false, consentAds:false, errorMessage:"No internet" });
-          return false;          
+          this.setState({ isLoaded:false, noAds:false, consentAds:true, errorMessage:"No internet" });
+          return false;
       }
 
     } catch(error) {
 
-      this.setState({ isLoaded:false,consentAds:true,noAds:true, errorMessage: error.message });
-      return false;      
+      this.setState({ isLoaded:false,consentAds:true,noAds:false, errorMessage: error.message });
+      return false;
     }    
   }
 
-  async componentDidMount() {    
-
-    const isNoAds = await this.checkIsPurchase();
-
-    if ( isNoAds ) return;
+  async componentDidMount() {   
 
     try {
 
@@ -130,8 +141,12 @@ export default class TwoMillion extends React.Component {
 
     } catch (err) {
 
-      this.setState({ isLoaded:false, errorMessage: "No connection to Play Services" });
-    } 
+      this.setState({ isLoaded:false, errorMessage: "No connection to Play Services: "+ err.message });
+    }
+
+    const isNoAds = await this.checkIsPurchase();
+
+    if ( isNoAds ) return;
 
     // ----CONNECT INTERNET LISTENER
     this.unsubscribe = NetInfo.addEventListener(state => {
@@ -156,31 +171,30 @@ export default class TwoMillion extends React.Component {
 
           try {
 
-              const purchaseState = JSON.parse(receipt).purchaseState;
+            const purchaseState = JSON.parse(receipt).purchaseState;
 
-              if ( purchaseState === 0 ) {
+            if ( purchaseState === 0 ) {
 
-                const nameDocument = JSON.parse(receipt).orderId;                            
+              const receiptParse = JSON.parse(receipt);
+
+              const nameDocument = receiptParse.orderId;                           
+            
+              // await RNIap.acknowledgePurchaseAndroid(purchase.purchaseToken);
               
-                RNIap.acknowledgePurchaseAndroid(purchase.purchaseToken);
-                
-                const ackResult = await RNIap.finishTransaction(purchase, false);
+              await RNIap.finishTransaction(purchase, false);
 
-                await setDocInBase(nameDocument,receipt);       
+              await setDocInBase(nameDocument,receipt);       
 
-                await this.scannerService.writeNoAds(nameDocument);
+              // await this.scannerService.writeNoAds(nameDocument);
 
-                this.setState({ noAds:true, consentAds:true,errorMessage:"" });                
-              }              
-
-              return this.setState({ errorMessage:  purchaseState })
-
+              await this.checkIsPurchase();
+            }     
+                          
           } catch(error) { 
            
-            this.setState({ errorMessage: "khk "+error.message })
+            this.setState({ errorMessage: "Receipt: "+error.message })
           }
-
-        } else { this.setState({ errorMessage: 'No receipt' }) }
+        }
     });
 
     this.purchaseError = purchaseErrorListener((error: PurchaseError) => {
@@ -199,16 +213,8 @@ export default class TwoMillion extends React.Component {
   }
 
   componentWillUnmount() {
-    this.unsubscribe();
 
-    if (this.purchaseUpdate) {
-      this.purchaseUpdate.remove();
-      this.purchaseUpdate = null;
-    }
-    if (this.purchaseError) {
-      this.purchaseError.remove();
-      this.purchaseError = null;
-    }
+    this.unsubscribeListeners();
   }
 
   render() {

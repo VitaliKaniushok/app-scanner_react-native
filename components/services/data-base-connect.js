@@ -1,4 +1,4 @@
-import { Alert } from 'react-native';
+// import { Alert } from 'react-native';
 import * as RNIap from 'react-native-iap';
 import firestore from '@react-native-firebase/firestore';
  
@@ -15,14 +15,19 @@ const checkId = async() => {
 
 	if ( purchases.length ) {
 
-    	// const jj = purchases[0].purchaseToken;
-		const jj = purchases[0].transactionReceipt;
-
-
+    	
+		const jj = purchases[0].purchaseStateAndroid;
     	return jj;
-    	// return await RNIap.consumePurchaseAndroid(jj);    	
-	}
+   	}
 
     return null;
 }
-export {setDocInBase,checkId};
+
+const resetPurchase = async() => {
+
+	const purchases = await RNIap.getAvailablePurchases();
+
+	const jj = purchases[0].purchaseToken;
+	return await RNIap.consumePurchaseAndroid(jj);  
+}
+export {setDocInBase,checkId,resetPurchase};
