@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, Alert } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 
 const ErrorMessage = ({message}) => {
@@ -7,7 +7,7 @@ const ErrorMessage = ({message}) => {
 	useEffect(() => {
 
 		SplashScreen.hide();
-		// Alert.alert('props', props.errorMessage.toString())
+		
 	},[])	
 
 	return (
@@ -17,6 +17,8 @@ const ErrorMessage = ({message}) => {
 			<Text style={style.text}>ERROR</Text>
 
 			<Text style={style.text}>{message}</Text>
+
+			<Text style={style.text}>Restart App</Text>
 
 		</View>
 	)

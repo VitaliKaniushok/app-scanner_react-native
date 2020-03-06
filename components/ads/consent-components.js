@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Alert } from 'react-native';
 // import { getDeviceId } from 'react-native-device-info';
 import SplashScreen from 'react-native-splash-screen';
 import { AdsConsent, AdsConsentStatus } from '@react-native-firebase/admob';
@@ -32,10 +32,17 @@ const consentComponents = async (setConsentAds,setErrorMessage) => {
 			setConsentAds();
 			return SplashScreen.hide();	
 		}	
+	}else{
+
+		// Alert.alert('Wont no ADS?','',[{text:'By', onPress: async (setErrorMessage)=>{ await purchaseNoAds(setErrorMessage) }}]);
+
+		
 	}
 
 	setConsentAds();
 
 	SplashScreen.hide();
+
+	
 }
 export default consentComponents;

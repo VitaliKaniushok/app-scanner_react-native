@@ -120,8 +120,7 @@ export default class TwoMillion extends React.Component {
         return false;     
 
       } else {
-
-          if ( this.state.isLoaded ) { SplashScreen.hide() }
+          
           this.setState({ isLoaded:false, noAds:false, consentAds:true, errorMessage:"No internet" });
           return false;
       }
@@ -157,7 +156,7 @@ export default class TwoMillion extends React.Component {
         
         return this.setState({errorMessage:"No connection to internet"});
 
-      } else { this.setState({errorMessage:''}); }
+      } else { this.setState({errorMessage:'', consentAds:false}); }
 
     });   
 
@@ -209,7 +208,7 @@ export default class TwoMillion extends React.Component {
       if ( !this.state.errorMessage ) {
         
         return await this.checkIsPurchase();
-      }      
+      }
   }
 
   componentWillUnmount() {
