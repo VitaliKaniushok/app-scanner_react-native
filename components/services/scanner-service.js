@@ -14,64 +14,65 @@ function ScannerService(obj) {
 
 				obj.setState({ 			      		
 		      		errorMessage: message			      		
-		      	})
-
+		      	});
 			}
 		}
 
-		async writeNoAds(id)  {
+		// async writeNoAds(id)  {
 
-			const dir =FileSystem.documentDirectory;
+		// 	const dir =FileSystem.documentDirectory;
 
-			const dataNames = await FileSystem.getInfoAsync(dir+'msmCk/msmCk.json');			
+		// 	const dataNames = await FileSystem.getInfoAsync(dir+'msmCk/msmCk.json');			
 
-			if ( id ) {
+		// 	if ( id ) {
 
-				const dataString = JSON.stringify(id);
+		// 		const dataString = JSON.stringify(id);
 
-				if ( dataNames.exists ) {
+		// 		if ( dataNames.exists ) {
 
-					await FileSystem.deleteAsync(dir+'msmCk');
-				}
+		// 			await FileSystem.deleteAsync(dir+'msmCk');
+		// 		}
 
-				await FileSystem.makeDirectoryAsync(dir+'msmCk');
+		// 		await FileSystem.makeDirectoryAsync(dir+'msmCk');
 
-				await FileSystem.writeAsStringAsync(dir+'msmCk/msmCk.json', dataString);
+		// 		await FileSystem.writeAsStringAsync(dir+'msmCk/msmCk.json', dataString);
 
-			} else {
+		// 	} else {
 
-				if ( dataNames.exists ) {
+		// 		if ( dataNames.exists ) {
 
-					await FileSystem.deleteAsync(dir+'msmCk');
-				}
-			}
-		}
+		// 			await FileSystem.deleteAsync(dir+'msmCk');
+		// 		}
+		// 	}
+		// }
 
-		async getNoAds()  {			
+		// async getNoAds()  {			
 
-			const dir =FileSystem.documentDirectory;
+		// 	const dir =FileSystem.documentDirectory;
 
-			const dataNames = await FileSystem.getInfoAsync(dir+'msmCk/msmCk.json');
+		// 	const dataNames = await FileSystem.getInfoAsync(dir+'msmCk/msmCk.json');
 
-			if ( !dataNames.exists ) return null;
+		// 	if ( !dataNames.exists ) return null;
 
-			const jsonData = await FileSystem.readAsStringAsync(dir+'msmCk/msmCk.json');
+		// 	const jsonData = await FileSystem.readAsStringAsync(dir+'msmCk/msmCk.json');
 
-			const parceId = JSON.parse(jsonData);
+		// 	const parceId = JSON.parse(jsonData);
 
-			return parceId;
+		// 	return parceId;
 
-		}
-
-		setConsentAds() {
+		// }
+		
+		cancelDialogPurchase() {
 
 			return function() {				
 
 				obj.setState({
-					consentAds: true					
+					dialogPurchase: false,
+					consentAds: true,
+					isLoaded:false			
 				});
 			}
-		}
+		}		
 		
 		scaning() {
 			return function() {

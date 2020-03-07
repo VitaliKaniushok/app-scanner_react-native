@@ -1,4 +1,3 @@
-// import { Alert } from 'react-native';
 import * as RNIap from 'react-native-iap';
 import firestore from '@react-native-firebase/firestore';
  

@@ -1,13 +1,15 @@
 import React from 'react';
-import { StatusBar, View, Alert } from 'react-native';
+import { StatusBar, View } from 'react-native';
 import { ContextApi } from './components/context-api.js';
-import SplashScreen from 'react-native-splash-screen';
 import ScannerService from './components/services/scanner-service.js';
 import { AppNavContainer } from './components/app-nav-container.js';
 import ErrorBoundry from './components/error-boundry/error-boundry.js';
 import NetInfo from "@react-native-community/netinfo";
 import { setDocInBase, checkId, resetPurchase } from './components/services/data-base-connect.js';
 import arrayLanguage from './components/services/arr-language-texts.js';
+import LoadingComponent from './components/loading/loading-component.js';
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
+import consentComponents from './components/ads/consent-components.js';
 import RNIap, {
   purchaseErrorListener, 
   purchaseUpdatedListener,
@@ -28,8 +30,8 @@ export default class TwoMillion extends React.Component {
 
     noAds:false,   
     consentAds:false,
-    noInternet: false,
-    setConsentAds: this.scannerService.setConsentAds(),     
+    dialogPurchase:false,
+    cancelDialogPurchase: this.scannerService.cancelDialogPurchase(),   
     
     isScaning: false,
     scaning: this.scannerService.scaning(),
@@ -55,8 +57,8 @@ export default class TwoMillion extends React.Component {
       language:'en',
       langDefinition:"english",     
       pitch:0.1,
-      rate:0.5
-    },
+      rate:0.5},
+
     speechText:'truthScanner',
     setLanguage:this.scannerService.setLanguage(),        
     
@@ -101,9 +103,7 @@ export default class TwoMillion extends React.Component {
       // return this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage: JSON.stringify(purchaseState) });
 
       if ( purchaseState === 1 ) {
-
-        if ( this.state.isLoaded ) { SplashScreen.hide() }
-        // await this.scannerService.writeNoAds(purchaseState);
+      
         this.unsubscribeListeners();
         this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage:"" });
         return true;      
@@ -116,23 +116,34 @@ export default class TwoMillion extends React.Component {
 
       if ( netInfo ) { 
 
-        this.setState({ isLoaded:false, noAds:false, consentAds:false, errorMessage:"" });
+        if ( !this.state.consentAds ) {
+        
+          return await consentComponents(
+              this.state.setErrorMessage,
+              ()=>{ this.setState({ dialogPurchase:true })},              
+              ()=>{ this.setState({ isLoaded:false,consentAds:true })}
+            );
+        }
+
+        this.setState({ isLoaded:false, noAds:false, errorMessage:"" });
         return false;     
 
       } else {
           
-          this.setState({ isLoaded:false, noAds:false, consentAds:true, errorMessage:"No internet" });
+          this.setState({ isLoaded:false, noAds:false, errorMessage:"No internet" });
           return false;
       }
 
     } catch(error) {
 
-      this.setState({ isLoaded:false,consentAds:true,noAds:false, errorMessage: error.message });
+      this.setState({ isLoaded:false, noAds:false, errorMessage: error.message });
       return false;
     }    
   }
 
-  async componentDidMount() {   
+  async componentDidMount() { 
+
+    changeNavigationBarColor('#000000'); 
 
     try {
 
@@ -156,7 +167,7 @@ export default class TwoMillion extends React.Component {
         
         return this.setState({errorMessage:"No connection to internet"});
 
-      } else { this.setState({errorMessage:'', consentAds:false}); }
+      } else { this.setState({errorMessage:''}) }
 
     });   
 
@@ -176,15 +187,11 @@ export default class TwoMillion extends React.Component {
 
               const receiptParse = JSON.parse(receipt);
 
-              const nameDocument = receiptParse.orderId;                           
-            
-              // await RNIap.acknowledgePurchaseAndroid(purchase.purchaseToken);
+              const nameDocument = receiptParse.orderId;    
               
               await RNIap.finishTransaction(purchase, false);
 
-              await setDocInBase(nameDocument,receipt);       
-
-              // await this.scannerService.writeNoAds(nameDocument);
+              await setDocInBase(nameDocument,receipt);  
 
               await this.checkIsPurchase();
             }     
@@ -220,7 +227,20 @@ export default class TwoMillion extends React.Component {
 
     if ( this.state.isLoaded ) {
 
-      return <View style={{flex:1,backgroundColor: '#f1f1f1'}} />
+      return (
+
+        <ErrorBoundry errorMessage={this.state.errorMessage}>
+
+          <ContextApi.Provider value={this.state}>
+
+            <StatusBar backgroundColor="#000000" barStyle="light-content" />
+
+            <LoadingComponent />
+
+          </ContextApi.Provider>
+
+        </ErrorBoundry>
+      )
     }
     
     return (

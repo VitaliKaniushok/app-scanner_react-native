@@ -1,13 +1,9 @@
 import React from 'react';
-import { View, BackHandler, Text, Alert } from 'react-native';
+import { View, BackHandler } from 'react-native';
 import { ContextApi } from '../context-api.js';
-import * as FaceDetector from 'expo-face-detector';
 import RNExitApp from 'react-native-exit-app';
 import CameraView from './camera-view.js';
 import ButtonsGroup from './buttons-group.js';
-import consentComponents from '../ads/consent-components.js';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
-import { InterstitialAd, TestIds, AdEventType } from '@react-native-firebase/admob';
 import InterstitialAdComponents from '../ads/interstitial-components.js';
 
 class Scanner extends React.Component {
@@ -35,8 +31,7 @@ class Scanner extends React.Component {
 
     componentDidMount() {
        
-        this.setTitle();
-        changeNavigationBarColor('#000000');         
+        this.setTitle();        
 
         this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
             if ( this.props.navigation.isFocused() ) {
@@ -47,10 +42,6 @@ class Scanner extends React.Component {
            
           return false;
         });
-
-        if ( this.context.noAds || this.context.consentAds || this.context.errorMessage ) return;
-// Alert.alert("Message",JSON.stringify(this.context.errorMessage))
-        consentComponents(this.context.setConsentAds, this.context.setErrorMessage);
     };
 
     componentDidUpdate(prevProps,prevState) {

@@ -1,17 +1,19 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View, Alert } from 'react-native';
-// import { getDeviceId } from 'react-native-device-info';
-import SplashScreen from 'react-native-splash-screen';
-import { AdsConsent, AdsConsentStatus } from '@react-native-firebase/admob';
+import { getDeviceId } from 'react-native-device-info';
+import { AdsConsent, AdsConsentStatus, AdsConsentDebugGeography } from '@react-native-firebase/admob';
 import purchaseNoAds from '../services/purchase-no-ads.js';
 
-const consentComponents = async (setConsentAds,setErrorMessage) => {	
+const consentComponents = async (setErrorMessage, setDialogPurchase, setIsLoadedConsentAds) => {	
 
 	// const deviceId = getDeviceId();
 
-	// await AdsConsent.addTestDevices(deviceId);
+	// throw new Error(deviceId);
 
-	await AdsConsent.setStatus(AdsConsentStatus.UNKNOWN);	
+	// await AdsConsent.addTestDevices([deviceId]);
+
+	// await AdsConsent.setStatus(AdsConsentStatus.UNKNOWN);
+	// await AdsConsent.setDebugGeography(AdsConsentDebugGeography.NOT_EEA);
 
 	const consentInfo = await AdsConsent.requestInfoUpdate(['pub-6938009934674893']);
 	
@@ -29,20 +31,14 @@ const consentComponents = async (setConsentAds,setErrorMessage) => {
 		if (formResult.userPrefersAdFree) {
 
 			await purchaseNoAds(setErrorMessage);
-			setConsentAds();
-			return SplashScreen.hide();	
-		}	
-	}else{
+			return setIsLoadedConsentAds();		
+		}
 
-		// Alert.alert('Wont no ADS?','',[{text:'By', onPress: async (setErrorMessage)=>{ await purchaseNoAds(setErrorMessage) }}]);
+		setIsLoadedConsentAds();
 
-		
-	}
+	} else {
 
-	setConsentAds();
-
-	SplashScreen.hide();
-
-	
+		setDialogPurchase();
+	}	
 }
 export default consentComponents;

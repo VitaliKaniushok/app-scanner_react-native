@@ -27,14 +27,12 @@ const RunLine = (props) => {
 		).start(() => props.scaningResult())
 	},[]);
 
-	let animPosX  = posX;
-
     return (
 
       <Animated.View                 
         style={{
           ...props.style,
-          top: animPosX,         
+          top: posX,         
         }}
       >
         {props.children}
