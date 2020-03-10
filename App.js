@@ -100,8 +100,6 @@ export default class TwoMillion extends React.Component {
 
       const purchaseState = await checkId();
 
-      // return this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage: JSON.stringify(purchaseState) });
-
       if ( purchaseState === 1 ) {
       
         this.unsubscribeListeners();

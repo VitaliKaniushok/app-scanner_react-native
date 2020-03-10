@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, View, Alert } from 'react-native';
-import { getDeviceId } from 'react-native-device-info';
+import { StyleSheet, Text, View } from 'react-native';
+// import { getDeviceId } from 'react-native-device-info';
 import { AdsConsent, AdsConsentStatus, AdsConsentDebugGeography } from '@react-native-firebase/admob';
 import purchaseNoAds from '../services/purchase-no-ads.js';
 
@@ -25,7 +25,7 @@ const consentComponents = async (setErrorMessage, setDialogPurchase, setIsLoaded
 			withAdFree: true,		
 			withPersonalizedAds: true,
 			withNonPersonalizedAds: true,			
-			privacyPolicy: 'https://sites.google.com/view/msm-privacy-truth-detector/document',
+			privacyPolicy: 'https://sites.google.com/view/prank-truth-detector/prank-truth-detector',
 		});
 
 		if (formResult.userPrefersAdFree) {
