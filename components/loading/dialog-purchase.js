@@ -27,7 +27,7 @@ const DialogPurchase = (props) => {
 			        	label="Purchase" 
 	    				onPress={ 
 	    					async ()=> { 
-								await purchaseNoAds(setErrorMessage);
+								await purchaseNoAds(setErrorMessage,cancelDialogPurchase);
 								cancelDialogPurchase();
 							} 
 						}/>

@@ -20,9 +20,9 @@ const BannerAdComponent = () => {
         <BannerAd
           unitId={TestIds.BANNER}
           size={BannerAdSize.LARGE_BANNER}
-          requestOptions={{
-            requestNonPersonalizedAdsOnly: true
-          }}
+          // requestOptions={{
+          //   requestNonPersonalizedAdsOnly: true                      
+          // }}
           // onAdLoaded={() => {
           //   setErrorAdLoaded(false);
           // }}

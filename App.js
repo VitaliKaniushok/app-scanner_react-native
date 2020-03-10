@@ -117,7 +117,7 @@ export default class TwoMillion extends React.Component {
         if ( !this.state.consentAds ) {
         
           return await consentComponents(
-              this.state.setErrorMessage,
+              this.state.setErrorMessage,              
               ()=>{ this.setState({ dialogPurchase:true })},              
               ()=>{ this.setState({ isLoaded:false,consentAds:true })}
             );

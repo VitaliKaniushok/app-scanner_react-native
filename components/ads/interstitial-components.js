@@ -12,11 +12,10 @@ const InterstitialAdComponents = (props) => {
 
 		if ( noAds || !consentAds ) return;
 
-		const interstitial = InterstitialAd.createForAdRequest(TestIds.INTERSTITIAL, {
-			    requestNonPersonalizedAdsOnly: true,
-			    maxAdContentRating: 'G',
-			    tagForUnderAgeOfConsent: true
-		});
+		const interstitial = InterstitialAd.createForAdRequest(
+			TestIds.INTERSTITIAL,
+			// { requestNonPersonalizedAdsOnly: true }
+		);
 
 		interstitial.onAdEvent((type, error, data ) => {
 
