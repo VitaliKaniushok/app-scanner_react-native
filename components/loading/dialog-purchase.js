@@ -26,10 +26,8 @@ const DialogPurchase = (props) => {
 			        	style={style.purchase}
 			        	label="Purchase" 
 	    				onPress={ 
-	    					async ()=> { 
-								await purchaseNoAds(setErrorMessage,cancelDialogPurchase);
-								cancelDialogPurchase();
-							} 
+	    					async ()=> { await purchaseNoAds(setErrorMessage,cancelDialogPurchase) ;
+	    					cancelDialogPurchase() }
 						}/>
 		        </View>
 

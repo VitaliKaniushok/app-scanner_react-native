@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatusBar, View, Alert } from 'react-native';
+import { StatusBar, View } from 'react-native';
 import { ContextApi } from './components/context-api.js';
 import ScannerService from './components/services/scanner-service.js';
 import { AppNavContainer } from './components/app-nav-container.js';
@@ -93,74 +93,65 @@ export default class TwoMillion extends React.Component {
     }
   }
 
-  netInfo = () => {
+  checkIsPurchase =  async() => {   
 
-    const isInet = async ()=> { await NetInfo.fetch().then(state => {
+    try {       
+      // return await resetPurchase(); 
+      const netInfo = await NetInfo.fetch().then(state => {
 
         return state.isInternetReachable;
-      }); }
-
-    return isInet;
-  }
-
-  checkIsPurchase = () => {   
-
-    try { 
-      
-    Alert.alert('check','FIRST',[{ text: 'FIRST', onPress: () => {} }])
-      const purchaseState =  checkId();
-      
-    Alert.alert('check','SECOND' ,[{ text: JSON.stringify(purchaseState), onPress: () => {} }])
-      if ( purchaseState === 1 ) {
-      
-        this.unsubscribeListeners();
-        this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage:"" });
-        return true;      
-      }
-
-      const netInfo = this.netInfo();
+      });
 
       if ( netInfo ) { 
 
+        const purchaseState =  await checkId();
+    // return this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage:JSON.stringify(purchaseState) });
+        if ( purchaseState === 1 ) {
+        
+          this.unsubscribeListeners();
+          this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage:"" });
+          return true;      
+        }
+
         if ( !this.state.consentAds ) {
-         Alert.alert('netInfo1','',[{ text: JSON.stringify(netInfo), onPress: () => {} }]);
-          consentComponents(
+
+          await consentComponents(
               this.state.setErrorMessage,              
               ()=>{ this.setState({ dialogPurchase:true })}
             );
           return false;
         }
-        Alert.alert('netInfo2','',[{ text: JSON.stringify(netInfo), onPress: () => {} }]);
+        
         this.setState({ isLoaded:false, noAds:false, errorMessage:"" });
         return false;     
 
       } else {
-          Alert.alert('netInfo3','',[{ text: JSON.stringify(netInfo), onPress: () => {} }]);
-          this.setState({ isLoaded:false, noAds:false, errorMessage:"No internet" });
+          
+          this.setState({ noAds:false, errorMessage:"No internet" });
           return false;
       }
 
     } catch(error) {
 
-      this.setState({ isLoaded:false, noAds:false, errorMessage: "error.message" });
+      this.setState({ noAds:false, errorMessage: error.message });
       return false;
     }    
   }
 
-  componentDidMount() { 
+  async componentDidMount() { 
 
     changeNavigationBarColor('#000000'); 
 
     try {
 
-      ( async()=> { await RNIap.initConnection() } )();
+      await RNIap.initConnection();
 
     } catch (err) {
 
-      this.setState({ isLoaded:false, errorMessage: "No connection to Play Services: "+ err.message });
+      this.setState({ errorMessage: "No connection to Play Services: "+ err.message });
     }
 
-    const isNoAds = this.checkIsPurchase();
+    const isNoAds = await this.checkIsPurchase();
 
     if ( isNoAds ) return;
 
@@ -171,7 +162,7 @@ export default class TwoMillion extends React.Component {
 
       if (!state.isInternetReachable) {
         
-        return this.setState({errorMessage:"No connection to internet"});
+        this.setState({errorMessage:"No connection to internet"});
 
       } else { this.setState({errorMessage:''}) }
 
@@ -214,15 +205,14 @@ export default class TwoMillion extends React.Component {
     });       
   }
 
-  componentDidUpdate(prevProps,prevState) {
-
+  async componentDidUpdate(prevProps,prevState) { 
+    
     if( !prevState.errorMessage === !this.state.errorMessage ) return;   
 
-      if ( !this.state.errorMessage ) {
-        
-        Alert.alert('Update','UPDATE',[{ text: 'OK', onPress: () => {} }]);        
-        return this.checkIsPurchase();        
-      } 
+    if ( !this.state.errorMessage ) {
+          
+      await this.checkIsPurchase();        
+    }       
   }
 
   componentWillUnmount() {

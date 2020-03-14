@@ -1,6 +1,6 @@
 import * as RNIap from 'react-native-iap';
 
-const purchaseNoAds = async (setErrorMessage, cancelDialogPurchase) => {
+const purchaseNoAds = async (setErrorMessage) => {
 
 	const itemSkus = [ 'com.msm.truth_app_noads' ];
 
@@ -12,15 +12,7 @@ const purchaseNoAds = async (setErrorMessage, cancelDialogPurchase) => {
 
     } catch(err) {
 
-    	// if (err.code == "E_USER_CANCELLED") {
-
-    	// 	await RNIap.finishTransaction();
-
-    	// 	return cancelDialogPurchase();
-    	// }
-
-      setErrorMessage(JSON.stringify(err.message));
-     
+      setErrorMessage(JSON.stringify(err.message));     
     }  
 }
 

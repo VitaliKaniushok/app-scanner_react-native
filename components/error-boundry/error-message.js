@@ -19,9 +19,9 @@ const ErrorMessage = ({message,checkIsPurchase}) => {
 			<Text style={style.text}>{message}</Text>
 			
 			<TouchableOpacity style={style.button}
-            	onPress = {checkIsPurchase}>
+            	onPress = { async ()=> await checkIsPurchase()}>
 
-            	<Text style={style.text}>Restart App</Text>
+            	<Text style={style.textButton}>Restart App</Text>
 
             </TouchableOpacity>
 
@@ -46,8 +46,17 @@ const style = StyleSheet.create({
 		paddingLeft:20,
 		paddingRight:20
 	},
-	listItem: {
-	    flex:1,    
-	    paddingTop: 20     
+	textButton:{
+		fontSize:25,
+		color: 'green',
+		paddingTop:10,
+		paddingBottom:10,
+		paddingLeft:20,
+		paddingRight:20
+	},
+	button: {
+	    borderRadius:7,   
+	    margin: 10,
+	    backgroundColor:'#fff'    
 	}
 })
