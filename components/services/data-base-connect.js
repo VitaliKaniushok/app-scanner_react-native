@@ -8,12 +8,11 @@ const setDocInBase = async(nameDocument,obj) => {
 	});	
 }
 
-const checkId = async() => {
+const checkId = () => {
 
-	const purchases = await RNIap.getAvailablePurchases(); 	
-
+	const purchases = (async() => { await RNIap.getAvailablePurchases() })(); 
+		
 	if ( purchases.length ) {
-
     	
 		const jj = purchases[0].purchaseStateAndroid;
     	return jj;

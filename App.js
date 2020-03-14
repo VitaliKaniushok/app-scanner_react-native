@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatusBar, View } from 'react-native';
+import { StatusBar, View, Alert } from 'react-native';
 import { ContextApi } from './components/context-api.js';
 import ScannerService from './components/services/scanner-service.js';
 import { AppNavContainer } from './components/app-nav-container.js';
@@ -93,13 +93,24 @@ export default class TwoMillion extends React.Component {
     }
   }
 
-  async checkIsPurchase(){   
+  netInfo = () => {
+
+    const isInet = async ()=> { await NetInfo.fetch().then(state => {
+
+        return state.isInternetReachable;
+      }); }
+
+    return isInet;
+  }
+
+  checkIsPurchase = () => {   
 
     try { 
-      // return await resetPurchase();
-
-      const purchaseState = await checkId();
-
+      
+    Alert.alert('check','FIRST',[{ text: 'FIRST', onPress: () => {} }])
+      const purchaseState =  checkId();
+      
+    Alert.alert('check','SECOND' ,[{ text: JSON.stringify(purchaseState), onPress: () => {} }])
       if ( purchaseState === 1 ) {
       
         this.unsubscribeListeners();
@@ -107,52 +118,49 @@ export default class TwoMillion extends React.Component {
         return true;      
       }
 
-      const netInfo = await NetInfo.fetch().then(state => {
-
-        return state.isInternetReachable;
-      });      
+      const netInfo = this.netInfo();
 
       if ( netInfo ) { 
 
         if ( !this.state.consentAds ) {
-        
-          return await consentComponents(
+         Alert.alert('netInfo1','',[{ text: JSON.stringify(netInfo), onPress: () => {} }]);
+          consentComponents(
               this.state.setErrorMessage,              
-              ()=>{ this.setState({ dialogPurchase:true })},              
-              ()=>{ this.setState({ isLoaded:false,consentAds:true })}
+              ()=>{ this.setState({ dialogPurchase:true })}
             );
+          return false;
         }
-
+        Alert.alert('netInfo2','',[{ text: JSON.stringify(netInfo), onPress: () => {} }]);
         this.setState({ isLoaded:false, noAds:false, errorMessage:"" });
         return false;     
 
       } else {
-          
+          Alert.alert('netInfo3','',[{ text: JSON.stringify(netInfo), onPress: () => {} }]);
           this.setState({ isLoaded:false, noAds:false, errorMessage:"No internet" });
           return false;
       }
 
     } catch(error) {
 
-      this.setState({ isLoaded:false, noAds:false, errorMessage: error.message });
+      this.setState({ isLoaded:false, noAds:false, errorMessage: "error.message" });
       return false;
     }    
   }
 
-  async componentDidMount() { 
+  componentDidMount() { 
 
     changeNavigationBarColor('#000000'); 
 
     try {
 
-      await RNIap.initConnection();
+      ( async()=> { await RNIap.initConnection() } )();
 
     } catch (err) {
 
       this.setState({ isLoaded:false, errorMessage: "No connection to Play Services: "+ err.message });
     }
 
-    const isNoAds = await this.checkIsPurchase();
+    const isNoAds = this.checkIsPurchase();
 
     if ( isNoAds ) return;
 
@@ -206,14 +214,15 @@ export default class TwoMillion extends React.Component {
     });       
   }
 
-  async componentDidUpdate(prevProps,prevState) {
+  componentDidUpdate(prevProps,prevState) {
 
     if( !prevState.errorMessage === !this.state.errorMessage ) return;   
 
       if ( !this.state.errorMessage ) {
         
-        return await this.checkIsPurchase();
-      }
+        Alert.alert('Update','UPDATE',[{ text: 'OK', onPress: () => {} }]);        
+        return this.checkIsPurchase();        
+      } 
   }
 
   componentWillUnmount() {
@@ -223,37 +232,31 @@ export default class TwoMillion extends React.Component {
 
   render() {
 
+    let visibleComponent = null;
+
     if ( this.state.isLoaded ) {
 
-      return (
+      visibleComponent = <LoadingComponent />
 
-        <ErrorBoundry errorMessage={this.state.errorMessage}>
+    } else {
 
-          <ContextApi.Provider value={this.state}>
-
-            <StatusBar backgroundColor="#000000" barStyle="light-content" />
-
-            <LoadingComponent />
-
-          </ContextApi.Provider>
-
-        </ErrorBoundry>
-      )
+      visibleComponent = <AppNavContainer />
     }
-    
+
     return (
 
-      <ErrorBoundry errorMessage={this.state.errorMessage}>
-            
+      <ErrorBoundry errorMessage={this.state.errorMessage}
+                    checkIsPurchase={this.checkIsPurchase}>
+
         <ContextApi.Provider value={this.state}>
 
           <StatusBar backgroundColor="#000000" barStyle="light-content" />
 
-          <AppNavContainer /> 
+           { visibleComponent }
 
         </ContextApi.Provider>
 
       </ErrorBoundry>
-    )    
+    ) 
   }
 }

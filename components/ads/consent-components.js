@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import admob, { AdsConsent, AdsConsentStatus, AdsConsentDebugGeography, MaxAdContentRating } from '@react-native-firebase/admob';
 import purchaseNoAds from '../services/purchase-no-ads.js';
 
-const consentComponents = async (setErrorMessage, setDialogPurchase, setIsLoadedConsentAds) => {	
+const consentComponents = async (setErrorMessage, setDialogPurchase) => {	
 
 	// const deviceId = getDeviceId();
 

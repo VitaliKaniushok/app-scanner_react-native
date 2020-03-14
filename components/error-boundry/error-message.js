@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 
-const ErrorMessage = ({message}) => {
+const ErrorMessage = ({message,checkIsPurchase}) => {
 
 	useEffect(() => {
 
@@ -17,8 +17,13 @@ const ErrorMessage = ({message}) => {
 			<Text style={style.text}>ERROR</Text>
 
 			<Text style={style.text}>{message}</Text>
+			
+			<TouchableOpacity style={style.button}
+            	onPress = {checkIsPurchase}>
 
-			<Text style={style.text}>Restart App</Text>
+            	<Text style={style.text}>Restart App</Text>
+
+            </TouchableOpacity>
 
 		</View>
 	)
@@ -40,5 +45,9 @@ const style = StyleSheet.create({
 		paddingTop:20,
 		paddingLeft:20,
 		paddingRight:20
+	},
+	listItem: {
+	    flex:1,    
+	    paddingTop: 20     
 	}
 })
