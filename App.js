@@ -29,6 +29,7 @@ export default class TwoMillion extends React.Component {
     setErrorMessage:this.scannerService.setErrorMessage(),
 
     noAds:false,   
+    purchaseState:0,
     consentAds:false,
     dialogPurchase:false,
     cancelDialogPurchase: this.scannerService.cancelDialogPurchase(),   
@@ -96,7 +97,7 @@ export default class TwoMillion extends React.Component {
   checkIsPurchase =  async() => {   
 
     try {       
-      // return await resetPurchase(); 
+      // return await resetPurchase();
       const netInfo = await NetInfo.fetch().then(state => {
 
         return state.isInternetReachable;
@@ -110,12 +111,14 @@ export default class TwoMillion extends React.Component {
         
           this.unsubscribeListeners();
           this.setState({ isLoaded:false, noAds:true, consentAds:true, errorMessage:"" });
-          return true;      
+          return true;
         }
 
-        if ( !this.state.consentAds ) {
+        if ( !this.state.consentAds ) {        
 
-          await consentComponents(
+          { this.setState({ purchaseState:purchaseState })}
+
+          await consentComponents(              
               this.state.setErrorMessage,              
               ()=>{ this.setState({ dialogPurchase:true })}
             );
@@ -127,7 +130,7 @@ export default class TwoMillion extends React.Component {
 
       } else {
           
-          this.setState({ noAds:false, errorMessage:"No internet" });
+          // this.setState({ noAds:false, errorMessage:"No internet" });
           return false;
       }
 
@@ -175,7 +178,7 @@ export default class TwoMillion extends React.Component {
         const receipt = purchase.transactionReceipt;
 
         if (receipt) {
-
+// return this.setState({ errorMessage: "Receipt: "+receipt }) 
           try {
 
             const purchaseState = JSON.parse(receipt).purchaseState;
@@ -191,12 +194,46 @@ export default class TwoMillion extends React.Component {
               await setDocInBase(nameDocument,receipt);  
 
               await this.checkIsPurchase();
-            }     
-                          
+
+            } else {
+              await this.checkIsPurchase();
+            }
+            // else if ( purchaseState === 1 ) {
+
+            //   this.setState({ errorMessage: "Receipt 1:  " +purchaseState });
+              
+            // }else if ( purchaseState === 2 ) {
+
+            //   this.setState({ errorMessage: "Receipt 2:  " +purchaseState });
+              
+            // }
+            // else if ( purchaseState === 3 ) {
+
+            //   this.setState({ errorMessage: "Receipt 3:  " +purchaseState });
+              
+            // }
+            // else if ( purchaseState === 4 ) {
+
+            //   this.setState({ errorMessage: "Receipt 4:  " +purchaseState });
+              
+            // }
+            // else if ( purchaseState === 5 ) {
+
+            //   this.setState({ errorMessage: "Receipt 5:  " +purchaseState });
+              
+            // }
+            // else if ( purchaseState === 7 ) {
+
+            //   this.setState({ errorMessage: "Receipt 7:  " +purchaseState });
+              
+            // }
+              // return this.setState({ errorMessage: "Receipt: bot "+ purchaseState });
           } catch(error) { 
            
-            this.setState({ errorMessage: "Receipt: "+error.message })
+            this.setState({ errorMessage: error.message })
           }
+        } else {
+          // await this.checkIsPurchase();
         }
     });
 

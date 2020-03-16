@@ -6,7 +6,28 @@ import {ContextApi} from '../context-api.js';
 
 const DialogPurchase = (props) => {
 
-	const { setErrorMessage, cancelDialogPurchase } = useContext(ContextApi);
+	const { setErrorMessage, cancelDialogPurchase, purchaseState } = useContext(ContextApi);
+	
+	if ( purchaseState == 2 ) {
+
+		return (
+
+	      	<View>
+	        	<Dialog.Container visible={props.visible}>
+
+	          		<Dialog.Title style={style.title} >Truth detector</Dialog.Title>
+
+			        <Dialog.Description style={style.description}>Your purchase is pending.</Dialog.Description>
+			        
+		        	<Dialog.Button
+			        	style={style.buttonPending}
+			        	label= "OK" 
+			        	onPress={cancelDialogPurchase}/>
+
+	        	</Dialog.Container>
+	      	</View>	
+		)
+	}
 
 	return (
       	<View>
@@ -50,11 +71,21 @@ const style = StyleSheet.create({
 		paddingLeft:10,
 		paddingRight:10
 	},
+	buttonPending: {
+		marginTop:20,
+		paddingTop:15,
+		paddingBottom:15,
+		paddingLeft:35,
+		paddingRight:35,
+		color:'#fff',
+		backgroundColor:'green',
+		borderRadius:10
+	},
 	buttons: {
 		marginTop:20,
 		flexDirection:'row',
 		justifyContent:'space-between'
-	},
+	},	
 	cancel:{    	   
 	    fontSize:20,	    
 	    color:'green',

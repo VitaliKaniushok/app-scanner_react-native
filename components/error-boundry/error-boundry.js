@@ -17,6 +17,7 @@ export default class ErrorBoundry extends Component {
   render() { 
 
   	if (this.state.hasError || this.props.errorMessage) {
+      
   		return <ErrorMessage message={this.props.errorMessage}
                            checkIsPurchase={this.props.checkIsPurchase}/>
   	}

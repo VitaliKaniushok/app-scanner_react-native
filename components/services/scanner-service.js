@@ -12,8 +12,8 @@ function ScannerService(obj) {
 
 			return function(message) {
 
-				obj.setState({ 			      		
-		      		errorMessage: message			      		
+				obj.setState({	
+		      		errorMessage: message
 		      	});
 			}
 		}

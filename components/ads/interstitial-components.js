@@ -6,11 +6,11 @@ import { InterstitialAd, TestIds, AdEventType } from '@react-native-firebase/adm
 const InterstitialAdComponents = (props) => {	
 
 	let errorMessage = '';
-	const { noAds, consentAds, setErrorMessage } = useContext(ContextApi);
+	const { noAds, setErrorMessage } = useContext(ContextApi);
 
 	useEffect(() => {
 
-		if ( noAds || !consentAds ) return;
+		if ( noAds ) return;
 
 		const interstitial = InterstitialAd.createForAdRequest(
 			TestIds.INTERSTITIAL,
@@ -45,7 +45,7 @@ const InterstitialAdComponents = (props) => {
 
 		interstitial.load();
 
-	},[noAds,consentAds]);	
+	},[noAds]);	
 
 	if (errorMessage) {	
 

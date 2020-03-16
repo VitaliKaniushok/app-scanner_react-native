@@ -5,9 +5,9 @@ import { BannerAd, BannerAdSize, TestIds } from '@react-native-firebase/admob';
 
 const BannerAdComponent = () => {
 
-  const { noAds, consentAds, setErrorMessage } = useContext(ContextApi);
+  const { noAds, setErrorMessage } = useContext(ContextApi);
 
-  if ( noAds | !consentAds ) {
+  if ( noAds ) {
 
     return null;
 
