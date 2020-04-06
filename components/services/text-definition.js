@@ -13,7 +13,7 @@ function chooseText(arg) {
         return arg[0]
     }
 
-    let i = Math.floor(Math.random() * (l - 0));
+    let i = Math.floor(Math.random() * l);
 
     return arg[i];
 }

@@ -1,67 +1,55 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { View, Text } from 'react-native';
 import { ContextApi } from '../context-api.js';
 import { InterstitialAd, TestIds, AdEventType } from '@react-native-firebase/admob';
 
 const InterstitialAdComponents = (props) => {	
 
-	let errorMessage = '';
 	const { noAds, setErrorMessage } = useContext(ContextApi);
+	// const adId = TestIds.INTERSTITIAL;
+  	const adId = 'ca-app-pub-6938009934674893/9062311388';
 
 	useEffect(() => {
 
 		if ( noAds ) return;
 
 		const interstitial = InterstitialAd.createForAdRequest(
-			TestIds.INTERSTITIAL,
+			adId,
 			// { requestNonPersonalizedAdsOnly: true }
 		);
 
-		interstitial.onAdEvent((type, error, data ) => {
+		const eventListener = interstitial.onAdEvent((type, error, data ) => {
 
 			if (type === AdEventType.LOADED) {			
 			  	
 			   	(async () => {
 	                await interstitial.show();
-	            })();			   	
-
-			   	const unsubscribe = interstitial.onAdEvent((type) => {
-				 
-				}); 
-				unsubscribe();
+	            })();
 			    
 			} else if (type === AdEventType.ERROR) { 	
 
-			  	errorMessage = error.toString();		  	
+			  	if( error.code == 'admob/no-fill') return;
+			  	setErrorMessage(error.toString())		  	
 			    
 			} else if (type === AdEventType.CLOSED) {
 
-			  	const unsubscribe = interstitial.onAdEvent((type) => {
-			 
-				}); 
-				unsubscribe();				   
+				eventListener();				   
 	  		}
 		});
 
 		interstitial.load();
 
-	},[noAds]);	
+		return () => {
+			eventListener();
+		}
 
-	if (errorMessage) {	
+	},[noAds]);
 
-		setErrorMessage('Interstitial Ads')	
-
-		return (
-			null		
-		)
-
-	} else {
-
-		return (
-			<View style={{flex:1}}>
-				{props.children}
-			</View>			
-		)
-	}
+	return (
+		<View style={{flex:1}}>
+			{props.children}
+		</View>			
+	)
+	
 }
 export default InterstitialAdComponents;

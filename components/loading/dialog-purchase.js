@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Linking } from 'react-native';
 import Dialog from "react-native-dialog";
 import purchaseNoAds from '../services/purchase-no-ads.js';
 import {ContextApi} from '../context-api.js';
@@ -31,16 +31,23 @@ const DialogPurchase = (props) => {
 
 	return (
       	<View>
-        	<Dialog.Container visible={props.visible}>
+        	<Dialog.Container visible={props.visible} style={style.dialog} contentStyle={{paddingTop:10, paddingLeft:7,paddingRight:7,borderRadius:10}}>
 
           		<Dialog.Title style={style.title} >Truth detector</Dialog.Title>
 
-		        <Dialog.Description style={style.description}>You want to use the application without ads and internet connection? Pay for the ad-free vertion.</Dialog.Description>
+          		<Dialog.Description style={style.descriptionPolicy}
+		        					onPress={() => { Linking.openURL("https://sites.google.com/view/prank-truth-detector/prank-truth-detector")} }>
+		        	Before you start using the application, read our privacy policy.
+		        </Dialog.Description>
+
+		        <Dialog.Description style={style.description}>		        	
+		        	If you want to use the application without ads and internet connection, support our project and buy the ad-free version.		        
+		        </Dialog.Description>		        
 
 		        <View style={style.buttons}>
 		        	<Dialog.Button
 			        	style={style.cancel}
-			        	label= "Cancel" 
+			        	label= "No" 
 			        	onPress={cancelDialogPurchase}/>
 
 			        <Dialog.Button
@@ -57,19 +64,24 @@ const DialogPurchase = (props) => {
 	)
 }
 export default DialogPurchase;
-const style = StyleSheet.create({  
-	dialog: {
-		backgroundColor:'green'
-	},
+const style = StyleSheet.create({	
 	title:{    	   
 	    fontSize:25,
+	    lineHeight:24,
 	    color:'green',
-	    textAlign:'center'	   
+	    textAlign:'center',
+	    paddingBottom:0,
+	    marginBottom:0,
+	       
 	},
 	description: {
-		fontSize:15,
-		paddingLeft:10,
-		paddingRight:10
+		fontSize:15		
+	},
+	descriptionPolicy: {
+		fontSize:15,		
+		textDecorationStyle:'solid',
+		textDecorationColor:'#000',
+		textDecorationLine:'underline'
 	},
 	buttonPending: {
 		marginTop:20,
@@ -82,8 +94,10 @@ const style = StyleSheet.create({
 		borderRadius:10
 	},
 	buttons: {
-		marginTop:20,
+		marginTop:5,
 		flexDirection:'row',
+		paddingLeft:7,
+		paddingRight:7,
 		justifyContent:'space-between'
 	},	
 	cancel:{    	   
@@ -92,7 +106,9 @@ const style = StyleSheet.create({
 	    borderWidth:1,
 	    borderColor:'green',
 	    backgroundColor:'#fff',
-	    borderRadius:10   
+	    borderRadius:10,
+	    paddingLeft: 15,
+	    paddingRight:15   
 	},
 	purchase:{    	   
 	    fontSize:20,

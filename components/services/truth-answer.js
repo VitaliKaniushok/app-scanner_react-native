@@ -33,7 +33,7 @@ const truthAnswer = {
 		"coś jest nie tak, ale wydaje się, że to jest prawda",
 		"Po analizie głosu, wykryłem 51% prawdy",
 		"Coś poszło nie tak, powtóż jescze raz scanowanie",		
-		"Brzmi przekonujaco, ale niestety to nie jest do końca  prawdą",
+		"Brzmi przekonujaco, ale niestety to nie jest do końca prawdą",
 		"Jeżeli to jest prawdą, to ja jestem odkurzaczem",
 		"biorąc pod uwagę bicie serca, to prawda",
 		"Po analizie głosu, wykryłem 30% kłamstwa",

@@ -1,5 +1,3 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
 // import { getDeviceId } from 'react-native-device-info';
 import admob, { AdsConsent, AdsConsentStatus, AdsConsentDebugGeography, MaxAdContentRating } from '@react-native-firebase/admob';
 import purchaseNoAds from '../services/purchase-no-ads.js';
@@ -17,7 +15,8 @@ const consentComponents = async (setErrorMessage, setDialogPurchase) => {
 
 	await admob().setRequestConfiguration({
 	  
-		maxAdContentRating: MaxAdContentRating.T 
+		maxAdContentRating: MaxAdContentRating.T,
+		tagForChildDirectedTreatment: true
 	})
 
 	const consentInfo = await AdsConsent.requestInfoUpdate(['pub-6938009934674893']);

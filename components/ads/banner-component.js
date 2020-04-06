@@ -6,6 +6,8 @@ import { BannerAd, BannerAdSize, TestIds } from '@react-native-firebase/admob';
 const BannerAdComponent = () => {
 
   const { noAds, setErrorMessage } = useContext(ContextApi);
+  // const adId = TestIds.BANNER;
+  const adId = "ca-app-pub-6938009934674893/3225808575";
 
   if ( noAds ) {
 
@@ -18,16 +20,17 @@ const BannerAdComponent = () => {
       <View style={style.banner} >
                       
         <BannerAd
-          unitId={TestIds.BANNER}
+          unitId={adId}
           size={BannerAdSize.LARGE_BANNER}
           // requestOptions={{
           //   requestNonPersonalizedAdsOnly: true                      
           // }}
-          // onAdLoaded={() => {
-          //   setErrorAdLoaded(false);
+          // onAdLoaded={() => {   
           // }}
-          onAdFailedToLoad={(error) => {            
-            setErrorMessage('Banner Ads');
+          onAdFailedToLoad={(error) => {  
+
+            if( error.code == 'admob/error-code-no-fill') return;          
+            setErrorMessage(error.message);
           }}
         />
 

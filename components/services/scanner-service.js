@@ -17,50 +17,6 @@ function ScannerService(obj) {
 		      	});
 			}
 		}
-
-		// async writeNoAds(id)  {
-
-		// 	const dir =FileSystem.documentDirectory;
-
-		// 	const dataNames = await FileSystem.getInfoAsync(dir+'msmCk/msmCk.json');			
-
-		// 	if ( id ) {
-
-		// 		const dataString = JSON.stringify(id);
-
-		// 		if ( dataNames.exists ) {
-
-		// 			await FileSystem.deleteAsync(dir+'msmCk');
-		// 		}
-
-		// 		await FileSystem.makeDirectoryAsync(dir+'msmCk');
-
-		// 		await FileSystem.writeAsStringAsync(dir+'msmCk/msmCk.json', dataString);
-
-		// 	} else {
-
-		// 		if ( dataNames.exists ) {
-
-		// 			await FileSystem.deleteAsync(dir+'msmCk');
-		// 		}
-		// 	}
-		// }
-
-		// async getNoAds()  {			
-
-		// 	const dir =FileSystem.documentDirectory;
-
-		// 	const dataNames = await FileSystem.getInfoAsync(dir+'msmCk/msmCk.json');
-
-		// 	if ( !dataNames.exists ) return null;
-
-		// 	const jsonData = await FileSystem.readAsStringAsync(dir+'msmCk/msmCk.json');
-
-		// 	const parceId = JSON.parse(jsonData);
-
-		// 	return parceId;
-
-		// }
 		
 		cancelDialogPurchase() {
 
@@ -443,6 +399,7 @@ function ScannerService(obj) {
 			return function() {				
 
 				let text = textDefinition(obj.state.speechText, obj.state.speech.language);
+				let dateStart;
 
 				if (!obj.state.isFaceDetected) {
 
@@ -454,6 +411,8 @@ function ScannerService(obj) {
 				};				
 
 				const start = () => {
+
+					dateStart = Date.now();
 					
 			      	obj.setState( state => ({
 
@@ -464,24 +423,53 @@ function ScannerService(obj) {
 			      	
 			    };
 			    const complete = () => {
+
+			    	const dateDone = Date.now();
+
+			    	if ( (dateDone - dateStart) < 100 ) {
+
+			    		obj.state.speech.progressSpeak && 
+				      	obj.setState( state => ({
+				      		errorMessage:"Add this language in your phone speech options. E.g: on your device open Settings → Language and input → Speech → Text to speech output.",
+				      		isScaning: false,			      		
+				      		speech: { 
+								...state.speech,
+								progressSpeak: false } 
+				      		}),
+				      	);
+			    		return;
+			    	}
+
 			      	obj.state.speech.progressSpeak && 
 			      	obj.setState( state => ({ 
 			      		isScaning: false,			      		
 			      		speech: { 
 							...state.speech,
 							progressSpeak: false } 
-			      		}),
+			      		}),			    
 			      	);
 			    };
+
+			    const errorSpeech = () => {
+
+			    	obj.setState( state => ({
+			      		errorMessage: 'Error speech',
+			      		isScaning: false,			      		
+			      		speech: { 
+							...state.speech,
+							progressSpeak: false } 
+			      		}),
+			      	);	    	
+			    }
 			   
 			    Speech.speak(text, {
 			      	language: obj.state.speech.language,
 			      	pitch: obj.state.speech.pitch,
 			      	rate: obj.state.speech.rate,
 			      	onStart: start,
-			      	onDone: complete
+			      	onDone: complete,
 			      	// onStopped: Speech.stop(),
-			      	// onError: complete
+			      	onError: errorSpeech			      	
 			    });
 			}
 		}
