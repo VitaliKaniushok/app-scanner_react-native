@@ -107,8 +107,8 @@ android {
         applicationId "com.msm.truthDetectorPrank"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "2.1"
+        versionCode 3
+        versionName "3.0.0"
     }
     splits {
         abi {
