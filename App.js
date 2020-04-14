@@ -32,7 +32,10 @@ export default class TwoMillion extends React.Component {
     purchaseState:0,
     consentAds:false,
     dialogPurchase:false,
-    cancelDialogPurchase: this.scannerService.cancelDialogPurchase(),   
+    cancelDialogPurchase: this.scannerService.cancelDialogPurchase(),
+
+    loadingInterstitial:true,
+    setLoadingInterstitial:this.scannerService.setLoadingInterstitial(),   
     
     isScaning: false,
     scaning: this.scannerService.scaning(),

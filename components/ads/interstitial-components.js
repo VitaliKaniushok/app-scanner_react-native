@@ -1,11 +1,11 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { View, Text } from 'react-native';
 import { ContextApi } from '../context-api.js';
 import { InterstitialAd, TestIds, AdEventType } from '@react-native-firebase/admob';
 
-const InterstitialAdComponents = (props) => {	
+const InterstitialAdComponents = (props) => {
 
-	const { noAds, setErrorMessage } = useContext(ContextApi);
+	const { noAds, setErrorMessage, setLoadingInterstitial } = useContext(ContextApi);
 	// const adId = TestIds.INTERSTITIAL;
   	const adId = 'ca-app-pub-6938009934674893/9062311388';
 
@@ -25,6 +25,8 @@ const InterstitialAdComponents = (props) => {
 			   	(async () => {
 	                await interstitial.show();
 	            })();
+
+	            setLoadingInterstitial(false);
 			    
 			} else if (type === AdEventType.ERROR) { 	
 
@@ -43,13 +45,12 @@ const InterstitialAdComponents = (props) => {
 			eventListener();
 		}
 
-	},[noAds]);
+	},[noAds]);	
 
 	return (
 		<View style={{flex:1}}>
 			{props.children}
 		</View>			
-	)
-	
+	)	
 }
 export default InterstitialAdComponents;

@@ -4,7 +4,6 @@ import { ContextApi } from '../context-api.js';
 import RNExitApp from 'react-native-exit-app';
 import CameraView from './camera-view.js';
 import ButtonsGroup from './buttons-group.js';
-import InterstitialAdComponents from '../ads/interstitial-components.js';
 
 class Scanner extends React.Component {
 
@@ -66,13 +65,13 @@ class Scanner extends React.Component {
             
         return (
 
-            <InterstitialAdComponents>
+            <View style={{ flex:1 }}>
 
                 <CameraView />
 
                 <ButtonsGroup navigation= {this.props.navigation} />
 
-            </InterstitialAdComponents>
+            </View>
         )       
 	}
 }

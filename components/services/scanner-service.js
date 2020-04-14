@@ -40,6 +40,13 @@ function ScannerService(obj) {
 				});					
 			}
 		}
+		setLoadingInterstitial()  {
+			return function(isLoading) {
+				obj.setState({
+					loadingInterstitial: isLoading				
+				});
+			}			
+		}
 
 		facesDetected() {
 

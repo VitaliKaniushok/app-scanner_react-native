@@ -64,6 +64,5 @@ const styles = StyleSheet.create({
     noActiveButton:{
     	backgroundColor: 'rgba(167,174,166,1)'
     },
-  	text: { fontSize: 14,  color: '#fff', textAlign:'center' }
-  	
+  	text: { fontSize: 14,  color: '#fff', textAlign:'center' }  	
 });

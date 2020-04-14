@@ -17,9 +17,7 @@ const OptionsSelfMode =() => {
 
   	return (
         	
-    	<OptionsTemplateComponent>
-
-        <InterstitialAdComponents>
+    	<OptionsTemplateComponent>        
 
       		<Text style = { styles.textHeader }>{appText.headSelfMode}</Text>
 
@@ -27,9 +25,7 @@ const OptionsSelfMode =() => {
 
           <Text style = { styles.textHeader }>{appText.headAddText}</Text>
 
-          <SelfModeList />
-
-        </InterstitialAdComponents>
+          <SelfModeList />        
 
     	</OptionsTemplateComponent>
   	);

@@ -6,6 +6,8 @@ import OptionsSpeechMode from './options-speech-mode.js';
 import OptionsSelectLanguage from './options-select-language.js';
 import { ContextApi } from '../context-api.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import InterstitialAdComponents from '../ads/interstitial-components.js';
+import LoadingComponent from '../loading/loading-component.js';
 
 class Options extends React.Component {
 
@@ -24,7 +26,8 @@ class Options extends React.Component {
   }
 
   state = {
-    topBarSetting:''    
+    topBarSetting:'',
+    loadingInterstitial:true   
   }
 
   componentDidUpdate(prevProps,prevState) {
@@ -35,20 +38,38 @@ class Options extends React.Component {
 
       this.setState({
           topBarSetting:this.context.appText.topBarSetting
+      });       
+    }
+
+    if(this.context.loadingInterstitial !== prevState.loadingInterstitial) {
+
+       this.setState({
+          loadingInterstitial:this.context.loadingInterstitial
       });
-      return 
     }
   }
 
-	render() {  
+	render() {
 
-    	return (
-      
-	        <KeyboardAwareScrollView 
-            style={styles.optionsContainer}
-            innerRef={ ( ref ) => this.scroll = ref}
-            enableOnAndroid={true}                  
-            >
+    if ( this.state.loadingInterstitial ) {
+
+      return (
+
+        <InterstitialAdComponents>
+
+          <LoadingComponent />
+
+        </InterstitialAdComponents>
+      )
+    }
+
+  	return (
+    
+        <KeyboardAwareScrollView 
+          style={styles.optionsContainer}
+          innerRef={ ( ref ) => this.scroll = ref}
+          enableOnAndroid={true}                  
+          >            
 
   	        <OptionsSelectMode />
             	
@@ -56,10 +77,10 @@ class Options extends React.Component {
 
             <OptionsSpeechMode />
 
-            <OptionsSelfMode/>                                 	
-		       
-	        </KeyboardAwareScrollView>      
-    	)
+            <OptionsSelfMode/>                                        	
+	       
+        </KeyboardAwareScrollView>      
+  	)
   }  
 }
 
