@@ -2,23 +2,23 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Text, StyleSheet ,View } from 'react-native';
 import {ContextApi} from '../context-api.js';
 import ScannerLine from './scanner-line.js';
-import BannerAdComponent from '../ads/banner-component.js';
+// import BannerAdComponent from '../ads/banner-component.js';
 
 const ScannerCamera = () => {
 
   const { isScaning, appText, isFaceDetected, speech, noAds } = useContext(ContextApi);
 
-  const [visibleBaner, setVisibleBaner] = useState( ()=>{ return ()=>null}  );
+  // const [visibleBaner, setVisibleBaner] = useState( ()=>{ return ()=>null}  );
 
-  let Banner = visibleBaner;  
+  // let Banner = visibleBaner;  
 
-  useEffect(() => {
+  // useEffect(() => {
     
-    setVisibleBaner(()=>{
-        return noAds ? ()=> null : ()=> <BannerAdComponent />
-      }
-    )   
-  },[noAds]);
+  //   setVisibleBaner(()=>{
+  //       return noAds ? ()=> null : ()=> <BannerAdComponent />
+  //     }
+  //   )   
+  // },[noAds]);
 
   let GreenLine = ()=> {
 
@@ -60,7 +60,7 @@ const ScannerCamera = () => {
 
       <GreenLine/>
 
-      <Banner/>
+      {/* <Banner/> */}
 
       <Text style={style.text}> {textView} </Text>
     

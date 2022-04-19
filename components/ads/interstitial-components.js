@@ -6,8 +6,8 @@ import { InterstitialAd, TestIds, AdEventType } from '@react-native-firebase/adm
 const InterstitialAdComponents = (props) => {
 
 	const { noAds, setErrorMessage, setLoadingInterstitial } = useContext(ContextApi);
-	// const adId = TestIds.INTERSTITIAL;
-  	const adId = 'ca-app-pub-6938009934674893/9062311388';
+	const adId = TestIds.INTERSTITIAL;
+  	// const adId = 'ca-app-pub-6938009934674893/9062311388';
 
 	useEffect(() => {
 
@@ -30,12 +30,15 @@ const InterstitialAdComponents = (props) => {
 			    
 			} else if (type === AdEventType.ERROR) { 	
 
-			  	if( error.code == 'admob/no-fill') return;
+			  	if( error.code == 'admob/no-fill')  {
+					setLoadingInterstitial(false);
+					return;
+				}
 			  	setErrorMessage(error.toString())		  	
 			    
 			} else if (type === AdEventType.CLOSED) {
 
-				eventListener();				   
+				eventListener();	   
 	  		}
 		});
 
